@@ -1,0 +1,64 @@
+{
+  "name": "info-ae-be",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.691.0",
+    "bcrypt": "^3.0.6",
+    "bluebird": "^3.7.2",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.1.0",
+    "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "file-type": "^14.6.0",
+    "fs": "0.0.1-security",
+    "http-status-codes": "^1.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwt-decode": "^2.2.0",
+    "module-alias": "^2.2.2",
+    "multer": "^1.4.2",
+    "multiparty": "^4.2.1",
+    "nodemailer": "^6.4.6",
+    "pg": "^7.12.1",
+    "pg-hstore": "^2.3.3",
+    "pg-promise": "^9.0.3",
+    "sequelize": "^5.15.2",
+    "validator": "^11.1.0",
+    "winston": "^3.2.1"
+  },
+  "scripts": {
+    "dev": "nodemon --exec babel-node src/express.js",
+    "build": "docker build -t 7179/info-ae-be . && docker push 7179/info-ae-be",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node src/express.js",
+    "prod": "env NODE_ENV=production babel-node src/express.js"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "_moduleAliases": {
+    "@root": ".",
+    "@shared": "src/shared",
+    "@my_module": "lib/some-file.js",
+    "something": "src/foo"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.8.4",
+    "nodemon": "^1.19.1"
+  }
+}

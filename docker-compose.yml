@@ -1,0 +1,20 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    volumes:
+       - db-data:/var/lib/postgresql/data
+    ports: 
+      - "5432:5432"
+  node:
+    image: perfilesbe
+    ports:
+      - "3030:3030"    
+    links:
+      - postgres
+    depends_on:
+      - postgres
+volumes:
+  db-data:
+    driver: local
+    
