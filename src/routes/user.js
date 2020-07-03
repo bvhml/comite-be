@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import exjwt from 'express-jwt';
+import { BAD_REQUEST, CREATED, OK, NOT_FOUND, NO_CONTENT  } from 'http-status-codes';
 
 const jwtMW = exjwt({
   secret: 'meg the cat', algorithms: ['RS256'] 
@@ -9,18 +10,27 @@ const jwtMW = exjwt({
 
 const router = Router();
 
+/******************************************************************************
+ *                      Get All Users - "GET /"
+ ******************************************************************************/
 router.get('/', async (req, res) => {
   const users = await req.context.models.User.findAll();
-  return res.send(users);
+  return res.status(OK).send(users);
 });
 
+/******************************************************************************
+ *                      Get specific user - "GET /:userId"
+ ******************************************************************************/
 router.get('/:userId', async (req, res) => {
   const user = await req.context.models.User.findByPk(
     req.params.userId,
   );
-  return res.send(user);
+  return res.status(OK).send(user);
 });
 
+/******************************************************************************
+ *                      Post Login - "POST /login"
+ ******************************************************************************/
 router.post('/login', async (req, res) => {
   const {email,password} = req.body;
   const saltRounds = 10;
@@ -34,8 +44,8 @@ router.post('/login', async (req, res) => {
     }).then((user) => {
       
       if (user === null) {
-        res.status(400).json({
-          status:400,
+        res.status(BAD_REQUEST).json({
+          status:BAD_REQUEST,
           success: false,
           token: null,
           message: 'Usuario/Password no son correctos',
@@ -49,7 +59,7 @@ router.post('/login', async (req, res) => {
           console.log("Valid!");
           let token = jwt.sign({ id:user.id,nombre:user.nombre,apellido:user.apellido,username: user.username }, 'meg the cat', { expiresIn: 3600 }); // Signing the token
           res.json({
-            status:200,
+            status:OK,
             success: true,
             message:"Login Correcto",
             jwt:token
@@ -57,8 +67,8 @@ router.post('/login', async (req, res) => {
         }
         else {
           console.log("Usuario/Password no son correctos");
-          res.status(400).json({
-            status:400,
+          res.status(BAD_REQUEST).json({
+            status:BAD_REQUEST,
             success: false,
             token: null,
             err: 'Usuario/Password no son correctos'
@@ -74,6 +84,9 @@ router.post('/login', async (req, res) => {
   });
 });
 
+/******************************************************************************
+ *                      Post SignUp - "POST /register"
+ ******************************************************************************/
 router.post('/register', async (req, res) => {
   const {email,password,nombre,apellido} = req.body;
   const saltRounds = 10;
@@ -88,16 +101,16 @@ router.post('/register', async (req, res) => {
       },
     ).then((user) => {
       if (user === null) {
-        res.status(400).json({
-          status:400,
+        res.status(BAD_REQUEST).json({
+          status:BAD_REQUEST,
           success: true,
           token: null,
           err: 'Ha ocurrido un error al insertar nuevo usuario'
         });
       }
       else{
-        res.status(200).json({
-          status:200,
+        res.status(OK).json({
+          status:OK,
           success: true,
           token: null,
           msg: 'Creado con exito '
@@ -108,8 +121,8 @@ router.post('/register', async (req, res) => {
     })
     .catch(function(err) {
       // print the error details
-      res.status(400).json({
-        status:400,
+      res.status(BAD_REQUEST).json({
+        status:BAD_REQUEST,
         success: false,
         token: null,
         err: 'El Correo ya esta en uso'
