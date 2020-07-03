@@ -5,7 +5,7 @@ import exjwt from 'express-jwt';
 import { BAD_REQUEST, CREATED, OK, NOT_FOUND, NO_CONTENT  } from 'http-status-codes';
 
 const jwtMW = exjwt({
-  secret: 'meg the cat', algorithms: ['RS256'] 
+  secret: process.env.SECRET, algorithms: ['RS256'] 
   });
 
 const router = Router();
@@ -56,8 +56,7 @@ router.post('/login', async (req, res) => {
 
       bcrypt.compare(password, user.password, function(err, result) {
         if(result === true){
-          console.log("Valid!");
-          let token = jwt.sign({ id:user.id,nombre:user.nombre,apellido:user.apellido,username: user.username }, 'meg the cat', { expiresIn: 3600 }); // Signing the token
+          let token = jwt.sign({ id:user.id,nombre:user.nombre,apellido:user.apellido,username: user.username }, process.env.SECRET, { expiresIn: 3600 }); // Signing the token
           res.json({
             status:OK,
             success: true,
