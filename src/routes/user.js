@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
           status:BAD_REQUEST,
           success: false,
           token: null,
-          message: 'Usuario/Password no son correctos',
+          message: 'Usuario ó Password no son correctos',
           user:user
         });
       }
@@ -65,12 +65,11 @@ router.post('/login', async (req, res) => {
           });
         }
         else {
-          console.log("Usuario/Password no son correctos");
           res.status(BAD_REQUEST).json({
             status:BAD_REQUEST,
             success: false,
             token: null,
-            err: 'Usuario/Password no son correctos'
+            err: 'Usuario ó Contraseña no son correctos'
           });
         }
       });
@@ -88,47 +87,64 @@ router.post('/login', async (req, res) => {
  ******************************************************************************/
 router.post('/register', async (req, res) => {
   const {email,password,nombre,apellido} = req.body;
-  const saltRounds = 10;
-
-  bcrypt.hash(password, saltRounds,(err, hash) => {
-    req.context.models.User.create(
-      {
-        username: email,
-        password: hash,
-        nombre:nombre,
-        apellido:apellido,
+  const buscarUsuario = await req.context.models.User.findAll({
+    attributes:['username'],
+      where: {
+        username:email,
       },
-    ).then((user) => {
-      if (user === null) {
-        res.status(BAD_REQUEST).json({
+      raw:true
+    }
+  );
+  if (buscarUsuario.length > 0){
+    return res.status(OK).json({
+      status:BAD_REQUEST,
+      success: false,
+      token: null,
+      err: 'El usuario ya esta en uso, seleccione uno diferente'
+    });
+  }else{
+    const saltRounds = 10;
+
+    bcrypt.hash(password, saltRounds,(err, hash) => {
+      req.context.models.User.create(
+        {
+          username: email,
+          password: hash,
+          nombre:nombre,
+          apellido:apellido,
+        },
+      ).then((user) => {
+        if (user === null) {
+          return res.status(BAD_REQUEST).json({
+            status:BAD_REQUEST,
+            success: true,
+            token: null,
+            err: 'Ha ocurrido un error al insertar nuevo usuario'
+          });
+        }
+        else{
+          return res.status(OK).json({
+            status:OK,
+            success: true,
+            token: null,
+            msg: 'Creado con exito '
+          });
+        }
+        
+        
+      })
+      .catch(function(err) {
+        // print the error details
+        return res.status(BAD_REQUEST).json({
           status:BAD_REQUEST,
-          success: true,
+          success: false,
           token: null,
-          err: 'Ha ocurrido un error al insertar nuevo usuario'
+          err: 'El Correo ya esta en uso'
         });
-      }
-      else{
-        res.status(OK).json({
-          status:OK,
-          success: true,
-          token: null,
-          msg: 'Creado con exito '
-        });
-      }
+        //console.log(err, request.body.email);
+    });
       
-      
-    })
-    .catch(function(err) {
-      // print the error details
-      res.status(BAD_REQUEST).json({
-        status:BAD_REQUEST,
-        success: false,
-        token: null,
-        err: 'El Correo ya esta en uso'
-      });
-      //console.log(err, request.body.email);
-  });
-    
-  });
+    });
+  }
 });
 export default router;
