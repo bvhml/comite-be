@@ -13,6 +13,7 @@ import https from 'https';
 
 
 const usersBaseURL = '/users';
+const programasBaseURL = '/programas';
 const app = express();
 // Application-Level Middleware
 app.use(express.static('public'));
@@ -26,13 +27,13 @@ app.use(async (req, res, next) => {
 
   req.context = {
     models,
-    /*me: await models.User.findByLogin(email||''),*/
   };
   next();
 });
 
 // Routes
 app.use(`${usersBaseURL}`, routes.user);
+app.use(`${programasBaseURL}`, routes.programa);
 // Start
 
 const eraseDatabaseOnSync = false;

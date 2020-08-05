@@ -16,26 +16,16 @@ const user = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: false,
       },
+
+      rol: {
+        type: DataTypes.INTEGER,
+        unique: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        unique: false,
+      },
     });
-
-    User.findByLogin = async (login,password) => {
-        let user = await User.findOne({
-          where: { username: login, password: password},
-        });
-    
-        if (!user) {
-          user = await User.findOne({
-            where: { username: login ,password: password} ,
-          });
-        }
-        else{
-          console.log(user.dataValues);
-        }
-        
-        return user;
-      };
-
-     
     return User;
   };
   

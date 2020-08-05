@@ -3,15 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "aws-sdk": "^2.691.0",
-    "bcrypt": "^3.0.6",
+    "aws-sdk": "^2.713.0",
+    "bcrypt": "^3.0.8",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "dotenv": "^8.1.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
-    "file-type": "^14.6.0",
+    "file-type": "^14.6.2",
     "fs": "0.0.1-security",
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
@@ -19,13 +19,14 @@
     "module-alias": "^2.2.2",
     "multer": "^1.4.2",
     "multiparty": "^4.2.1",
-    "nodemailer": "^6.4.6",
-    "pg": "^7.12.1",
+    "nodemailer": "^6.4.10",
+    "pg": "^7.18.2",
     "pg-hstore": "^2.3.3",
-    "pg-promise": "^9.0.3",
-    "sequelize": "^5.15.2",
+    "pg-promise": "^9.3.6",
+    "sequelize": "^5.22.3",
+    "uuid": "^8.2.0",
     "validator": "^11.1.0",
-    "winston": "^3.2.1"
+    "winston": "^3.3.3"
   },
   "scripts": {
     "dev": "nodemon --exec babel-node src/express.js",
@@ -56,9 +57,10 @@
     "something": "src/foo"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/node": "^7.5.5",
-    "@babel/preset-env": "^7.8.4",
-    "nodemon": "^1.19.1"
+    "@babel/core": "^7.10.4",
+    "@babel/node": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "nodemon": "^1.19.4",
+    "sequelize-cli": "^6.2.0"
   }
 }

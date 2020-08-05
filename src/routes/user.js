@@ -14,16 +14,19 @@ const router = Router();
  *                      Get All Users - "GET /"
  ******************************************************************************/
 router.get('/', async (req, res) => {
-  const users = await req.context.models.User.findAll();
+  const users = await req.context.models.User.findAll({
+    attributes:['id','username','rol'],
+      raw:true
+    });
   return res.status(OK).send(users);
 });
 
 /******************************************************************************
  *                      Get specific user - "GET /:userId"
  ******************************************************************************/
-router.get('/:userId', async (req, res) => {
-  const user = await req.context.models.User.findByPk(
-    req.params.userId,
+router.get('/:username', async (req, res) => {
+  const user = await req.context.models.User.findOne(
+    {where: {username: req.params.username}}
   );
   return res.status(OK).send(user);
 });
@@ -61,7 +64,8 @@ router.post('/login', async (req, res) => {
             status:OK,
             success: true,
             message:"Login Correcto",
-            jwt:token
+            jwt:token,
+            user:user.username
           });
         }
         else {
@@ -86,16 +90,16 @@ router.post('/login', async (req, res) => {
  *                      Post SignUp - "POST /register"
  ******************************************************************************/
 router.post('/register', async (req, res) => {
-  const {email,password,nombre,apellido} = req.body;
-  const buscarUsuario = await req.context.models.User.findAll({
+  const {username,password,nombre,apellido,rol,email} = req.body;
+  const buscarUsuario = await req.context.models.User.findOne({
     attributes:['username'],
       where: {
-        username:email,
+        username:username,
       },
       raw:true
     }
   );
-  if (buscarUsuario.length > 0){
+  if (buscarUsuario){
     return res.status(OK).json({
       status:BAD_REQUEST,
       success: false,
@@ -108,10 +112,12 @@ router.post('/register', async (req, res) => {
     bcrypt.hash(password, saltRounds,(err, hash) => {
       req.context.models.User.create(
         {
-          username: email,
+          username: username,
           password: hash,
           nombre:nombre,
           apellido:apellido,
+          rol:rol,
+          email:email
         },
       ).then((user) => {
         if (user === null) {
@@ -141,10 +147,47 @@ router.post('/register', async (req, res) => {
           token: null,
           err: 'El Correo ya esta en uso'
         });
-        //console.log(err, request.body.email);
+        //console.log(err, request.body.username);
     });
       
     });
   }
 });
+
+
+/******************************************************************************
+ *                      Post ResetPassword - "POST /resetpassword"
+ ******************************************************************************/
+router.post('/resetpassword', async (req, res) => {
+  const {username,password} = req.body;
+  const buscarUsuario = await req.context.models.User.findOne({
+      where: {
+        username:username,
+      },
+      raw:true
+    }
+  );
+  if (buscarUsuario){ 
+
+    const saltRounds = 10;
+
+    bcrypt.hash(password, saltRounds,(err, hash) => {
+      req.context.models.User.update(
+        {
+          password: hash,
+        },
+        {returning: true, where: {username: username} }   
+      );
+    });
+    return res.status(OK).json({status:OK,message:'Contraseña cambiada existosamente'});
+  }else{
+    
+    return res.status(OK).json({
+      status:BAD_REQUEST,
+      success: false,
+      err: 'No existe nigun usuario con ese nombre'
+    });
+  }
+});
+
 export default router;
