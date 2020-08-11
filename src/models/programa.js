@@ -99,6 +99,10 @@ const programa = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             unique: false,
         },
+        requisitos:{
+            type: DataTypes.TEXT,
+            unique: false,
+        },
         username: {
             type: DataTypes.STRING,
             references: {

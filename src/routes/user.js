@@ -1,34 +1,58 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import exjwt from 'express-jwt';
 import { BAD_REQUEST, CREATED, OK, NOT_FOUND, NO_CONTENT  } from 'http-status-codes';
-
-const jwtMW = exjwt({
-  secret: process.env.SECRET, algorithms: ['RS256'] 
-  });
+import { logger } from '../shared/Logger';
 
 const router = Router();
+
+function extractToken (req) {
+  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      return req.headers.authorization.split(' ')[1];
+  } else if (req.query && req.query.token) {
+      return req.query.token;
+  }
+  return null;
+}
 
 /******************************************************************************
  *                      Get All Users - "GET /"
  ******************************************************************************/
 router.get('/', async (req, res) => {
-  const users = await req.context.models.User.findAll({
-    attributes:['id','username','rol'],
-      raw:true
-    });
-  return res.status(OK).send(users);
+
+  try {
+    jwt.verify(extractToken(req),process.env.SECRET);
+
+    const users = await req.context.models.User.findAll({
+      attributes:['id','username','rol'],
+        raw:true
+      });
+    return res.status(OK).send(users);
+  } catch (error) {
+    logger.error(error);
+    return res.status(BAD_REQUEST).json('Ha ocurrido un error'); 
+  }
+  
 });
 
 /******************************************************************************
  *                      Get specific user - "GET /:userId"
  ******************************************************************************/
 router.get('/:username', async (req, res) => {
-  const user = await req.context.models.User.findOne(
-    {where: {username: req.params.username}}
-  );
-  return res.status(OK).send(user);
+
+  try {
+    jwt.verify(extractToken(req),process.env.SECRET);
+
+    const user = await req.context.models.User.findOne(
+      {where: {username: req.params.username}}
+    );
+    return res.status(OK).send(user);
+    
+  } catch (error) {
+    logger.error(error);
+    return res.status(BAD_REQUEST).json('Ha ocurrido un error'); 
+  }
+  
 });
 
 /******************************************************************************

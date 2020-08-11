@@ -1,17 +1,30 @@
 import { Router } from 'express';
 import { BAD_REQUEST, CREATED, OK, NOT_FOUND, NO_CONTENT  } from 'http-status-codes';
 import { logger } from '../shared/Logger';
-import { Op } from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
+import jwt from "jsonwebtoken";
 
 const router = Router();
+
+function extractToken (req) {
+  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      return req.headers.authorization.split(' ')[1];
+  } else if (req.query && req.query.token) {
+      return req.query.token;
+  }
+  return null;
+}
 
 /******************************************************************************
  *                      Get All Programas - "GET /"
  ******************************************************************************/
 router.get('/', async (req, res) => {
 
+    
     try {
+      
+        jwt.verify(extractToken(req),process.env.SECRET);
+
         const programas = await req.context.models.Programa.findAll({
           order: [
             ['unidadAcademica', 'ASC'],
@@ -19,8 +32,11 @@ router.get('/', async (req, res) => {
           raw:true
         });
         return res.status(OK).json(programas);
+      
+
+        
     } catch (error) {
-        logger.error(`Error al obtener todas las programas`, error);
+        logger.error(error);
         return res.status(BAD_REQUEST).json('Ha ocurrido un error al obtener todas las programas');
     }
   
@@ -41,7 +57,7 @@ router.get('/:programaId', async (req, res) => {
     });
     return res.status(OK).json(programa);
 } catch (error) {
-  logger.error(`Error al buscar programa laboral ${req.params.programaId}`, error);
+  logger.error(error);
   return res.status(BAD_REQUEST).json('Ha ocurrido un error al buscar programa laboral');
 }
 });
@@ -135,6 +151,11 @@ router.post('/', async (req, res) => {
           pensum: programa.pensum === '' ? null: programa.pensum,
           moneda: programa.moneda === '' ? null: programa.moneda,
           palabrasClave: programa.palabrasClave === '' ? null: programa.palabrasClave,
+          correoContacto: programa.correoContacto === '' ? null: programa.correoContacto,
+          informacionAdicional: programa.informacionAdicional === '' ? null: programa.informacionAdicional,
+          descripcionPrograma: programa.descripcionPrograma === '' ? null: programa.descripcionPrograma,
+          enfasis: programa.enfasis === '' ? null: programa.enfasis,
+          requisitos: programa.requisitos === '' ? null: programa.requisitos,
         },
         {returning: true, where: {username: programa.username, id: programa.id } }
       );
@@ -162,12 +183,17 @@ router.post('/', async (req, res) => {
               pensum: programa.pensum === '' ? null: programa.pensum,
               moneda: programa.moneda === '' ? null: programa.moneda,
               palabrasClave: programa.palabrasClave === '' ? null: programa.palabrasClave,
+              correoContacto: programa.correoContacto === '' ? null: programa.correoContacto,
+              informacionAdicional: programa.informacionAdicional === '' ? null: programa.informacionAdicional,
+              descripcionPrograma: programa.descripcionPrograma === '' ? null: programa.descripcionPrograma,
+              enfasis: programa.enfasis === '' ? null: programa.enfasis,
+              requisitos: programa.requisitos === '' ? null: programa.requisitos,
               username: username,
 
           }
       );
 
-    return res.status(OK).json('Programa creado exitosamente.');
+      return res.status(OK).json('Programa creado exitosamente.');
       }
     }else{
 
@@ -190,6 +216,14 @@ router.post('/', async (req, res) => {
             duracionPrograma: programa.duracionPrograma === '' ? null: programa.duracionPrograma,
             dimensionalDuracion: programa.dimensionalDuracion === '' ? null: programa.dimensionalDuracion,
             modalidad: programa.modalidad === '' ? null: programa.modalidad,
+            pensum: programa.pensum === '' ? null: programa.pensum,
+            moneda: programa.moneda === '' ? null: programa.moneda,
+            palabrasClave: programa.palabrasClave === '' ? null: programa.palabrasClave,
+            correoContacto: programa.correoContacto === '' ? null: programa.correoContacto,
+            informacionAdicional: programa.informacionAdicional === '' ? null: programa.informacionAdicional,
+            descripcionPrograma: programa.descripcionPrograma === '' ? null: programa.descripcionPrograma,
+            enfasis: programa.enfasis === '' ? null: programa.enfasis,
+            requisitos: programa.requisitos === '' ? null: programa.requisitos,
             username: username,
 
         }
