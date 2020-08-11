@@ -43,6 +43,25 @@ router.get('/', async (req, res) => {
 });
 
 /******************************************************************************
+ *                      Get All Programas - "GET /"
+ ******************************************************************************/
+router.get('/health/check', async (req, res) => {
+
+    
+  try {
+    
+      return res.status(OK).json('Health Check Ok');
+    
+
+      
+  } catch (error) {
+      logger.error(error);
+      return res.status(BAD_REQUEST).json('Ha ocurrido un error al obtener todas las programas');
+  }
+
+});
+
+/******************************************************************************
  *                      Get specific programa - "GET /:programaId"
  ******************************************************************************/
 
@@ -91,7 +110,7 @@ router.get('/usuario/:username', async (req, res) => {
 
 router.put('/', async (req, res) => {
   try {
-
+    jwt.verify(extractToken(req),process.env.SECRET);
     const { programa } = req.body;
 
     await req.context.models.Programa.update(
@@ -106,7 +125,7 @@ router.put('/', async (req, res) => {
     return res.status(OK).json('Programa actualizada exitosamente.');
 
   } catch (error) {
-    logger.error(`Error al actualizar programa ${req.params.username}`, error);
+    logger.error(error);
     return res.status(BAD_REQUEST).json('Ha ocurrido un error.');
   }
 });

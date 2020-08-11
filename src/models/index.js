@@ -8,7 +8,8 @@ const sequelize = new Sequelize(
     username: process.env.USER,
     dialect: 'postgres',
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT
+    port: process.env.DB_PORT,
+    logging: process.env.NODE_ENV === 'development' ? console.log: false
   },
 );
 
