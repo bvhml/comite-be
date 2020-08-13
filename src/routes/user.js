@@ -214,4 +214,40 @@ router.post('/resetpassword', async (req, res) => {
   }
 });
 
+/******************************************************************************
+ *                      Post ResetPassword - "POST /resetmypassword"
+ ******************************************************************************/
+router.post('/resetmypassword', async (req, res) => {
+  const { username,password } = req.body;
+  const buscarUsuario = await req.context.models.User.findOne({
+      where: {
+        username:username,
+      },
+      raw:true
+    }
+  );
+  if (buscarUsuario){ 
+
+    const saltRounds = 10;
+
+    bcrypt.hash(password, saltRounds,(err, hash) => {
+      req.context.models.User.update(
+        {
+          password: hash,
+          inicio_sesion: 1,
+        },
+        {returning: true, where: {username: username} }   
+      );
+    });
+    return res.status(OK).json({status:OK,message:'Contraseña cambiada existosamente'});
+  }else{
+    
+    return res.status(OK).json({
+      status:BAD_REQUEST,
+      success: false,
+      err: 'No existe nigun usuario con ese nombre'
+    });
+  }
+});
+
 export default router;

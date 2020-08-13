@@ -25,6 +25,10 @@ const user = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: false,
       },
+      inicio_sesion:{
+        type: DataTypes.INTEGER,
+        unique: false,
+      }
     });
     return User;
   };
