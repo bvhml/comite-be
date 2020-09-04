@@ -30,7 +30,7 @@
   },
   "scripts": {
     "dev": "nodemon --exec babel-node src/server/express.js",
-    "build": "docker build -t 7179/info-ae-be . && docker push 7179/info-ae-be",
+    "build": "docker build -t 7179/comite-be . && docker push 7179/comite-be",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-node src/server/express.js",
     "prod": "env NODE_ENV=production babel-node src/server/express.js"

@@ -23,6 +23,7 @@ const usuario = (sequelize, DataTypes) => {
       inicio_sesion:{
         type: DataTypes.INTEGER,
         unique: false,
+        defaultValue: 0,
       }
     },
       {
