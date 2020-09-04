@@ -1,10 +1,10 @@
 {
   "development": {
-    "username": "alumni",
-    "password": "uofpma17&!",
-    "database": "ae_alumni",
-    "host": "alumni.ufm.edu",
-    "port": "49822",
+    "username": "",
+    "password": "",
+    "database": "",
+    "host": "",
+    "port": "5432",
     "dialect": "postgres"
   },
   "test": {
@@ -15,11 +15,11 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "alumni",
+    "username": "",
     "password": null,
-    "database": "ae_alumni",
-    "host": "alumni.ufm.edu",
-    "port": "49822",
+    "database": "",
+    "host": "",
+    "port": "",
     "dialect": "postgres"
   }
 }
