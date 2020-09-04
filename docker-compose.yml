@@ -7,9 +7,9 @@ services:
     ports: 
       - "5432:5432"
   node:
-    image: perfilesbe
+    image: 7179/comite-be
     ports:
-      - "3030:3030"    
+      - "3000:3000"    
     links:
       - postgres
     depends_on:
