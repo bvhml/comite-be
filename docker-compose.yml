@@ -5,9 +5,12 @@ services:
     volumes:
        - db-data:/var/lib/postgresql/data
     ports: 
-      - "5432:5432"
+      - "49822:5432"
+    environment:
+      - POSTGRES_PASSWORD=url_root
+      - POSTGRES_USER=postgres
   node:
-    image: 7179/comite-be
+    build: .
     ports:
       - "3000:3000"    
     links:
