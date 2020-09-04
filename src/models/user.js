@@ -16,13 +16,8 @@ const user = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: false,
       },
-
       rol: {
         type: DataTypes.INTEGER,
-        unique: false,
-      },
-      email: {
-        type: DataTypes.STRING,
         unique: false,
       },
       inicio_sesion:{
