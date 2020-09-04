@@ -22,8 +22,7 @@ app.use(async (req, res, next) => {
 });
 
 // Routes
-app.use(`${usersBaseURL}`, routes.user);
-app.use(`${programasBaseURL}`, routes.programa);
+app.use(`${usersBaseURL}`, routes.usuario);
 // Start
 
 export default app;

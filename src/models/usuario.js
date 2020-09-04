@@ -1,5 +1,5 @@
-const user = (sequelize, DataTypes) => {
-    const User = sequelize.define('user', {
+const usuario = (sequelize, DataTypes) => {
+    const Usuario = sequelize.define('usuario', {
       username: {
         type: DataTypes.STRING,
         unique: true,
@@ -24,8 +24,13 @@ const user = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         unique: false,
       }
-    });
-    return User;
+    },
+      {
+        timestamps: true,
+        freezeTableName: true,
+        tableName: 'usuarios'
+      });
+    return Usuario;
   };
   
-  export default user;
+  export default usuario;

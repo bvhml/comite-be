@@ -171,7 +171,6 @@ router.post('/register', async (req, res) => {
           token: null,
           err: 'El Correo ya esta en uso'
         });
-        //console.log(err, request.body.username);
     });
       
     });

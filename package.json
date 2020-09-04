@@ -29,11 +29,11 @@
     "winston": "^3.3.3"
   },
   "scripts": {
-    "dev": "nodemon --exec babel-node src/express.js",
+    "dev": "nodemon --exec babel-node src/server/express.js",
     "build": "docker build -t 7179/info-ae-be . && docker push 7179/info-ae-be",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-node src/express.js",
-    "prod": "env NODE_ENV=production babel-node src/express.js"
+    "start": "babel-node src/server/express.js",
+    "prod": "env NODE_ENV=production babel-node src/server/express.js"
   },
   "eslintConfig": {
     "extends": "react-app"
