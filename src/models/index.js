@@ -9,12 +9,13 @@ const sequelize = new Sequelize(
     dialect: 'postgres',
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-    logging: process.env.NODE_ENV === 'development' ? console.log: false
+    logging: console.log
   },
 );
 
 const models = {
   User: sequelize.import('./usuario'),
+  Vehiculo: sequelize.import('./vehiculo'),
 };
 
 Object.keys(models).forEach(key => {

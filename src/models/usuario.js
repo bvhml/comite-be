@@ -16,6 +16,14 @@ const usuario = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: false,
       },
+      edad: {
+        type: DataTypes.INTEGER,
+        unique: false,
+      },
+      dpi: {
+        type: DataTypes.STRING,
+        unique: false,
+      },
       rol: {
         type: DataTypes.INTEGER,
         unique: false,
@@ -24,7 +32,7 @@ const usuario = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         unique: false,
         defaultValue: 0,
-      }
+      },
     },
       {
         timestamps: true,

@@ -3,17 +3,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { BAD_REQUEST, CREATED, OK, NOT_FOUND, NO_CONTENT  } from 'http-status-codes';
 import { logger } from '../shared/Logger';
+import extractToken from '../shared/extractToken';
 
 const router = Router();
 
-function extractToken (req) {
-  if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-      return req.headers.authorization.split(' ')[1];
-  } else if (req.query && req.query.token) {
-      return req.query.token;
-  }
-  return null;
-}
+
 
 /******************************************************************************
  *                      Get All Users - "GET /"
