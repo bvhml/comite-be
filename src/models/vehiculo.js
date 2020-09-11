@@ -13,48 +13,40 @@ const vehiculo = (sequelize, DataTypes) => {
         unique: false,
       },
       tipo: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: false,
       },
       chasis:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: false,
-        defaultValue: 0,
       },
       marca:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: false,
-        defaultValue: 0,
       },
       tamaño_motor:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: false,
-        defaultValue: 0,
       },
       cant_cilindros:{
         type: DataTypes.INTEGER,
         unique: false,
-        defaultValue: 0,
       },
       toneladas:{
         type: DataTypes.INTEGER,
         unique: false,
-        defaultValue: 0,
       },
       transmision:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: false,
-        defaultValue: 0,
       },
       asientos:{
         type: DataTypes.INTEGER,
         unique: false,
-        defaultValue: 0,
       },
       color:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: false,
-        defaultValue: 0,
       }
     },
       {
