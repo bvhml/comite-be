@@ -10,7 +10,7 @@ sequelize.sync({ force: true }).then(async () => {
   try {
 
     //Crear usuario Admin example
-    createUsers();
+    createSampleData();
 
     if(process.env.HTTPS_SERVER === 'true'){
       var options = {
@@ -36,7 +36,7 @@ sequelize.sync({ force: true }).then(async () => {
 }
 });
 
-const createUsers = async () => {
+const createSampleData = async () => {
   await models.User.create(
     {
       username: 'a@b.com',
@@ -45,5 +45,22 @@ const createUsers = async () => {
       apellido:'Admin example',
     },
   );
-  console.log("Creation of example user done");
+
+  await models.Vehiculo.create(
+    {
+        placa: '222URL',
+        modelo: '2020',
+        linea: 'Supra',
+        tipo:  'Sedan',
+        chasis: '213213GXTJ2',
+        marca: 'Toyota',
+        tamaño_motor: '2500',
+        cant_cilindros: '4',
+        toneladas: '1',
+        transmision: 'Mecanica',
+        asientos: '4',
+        color: 'Negro'
+    }
+);
+  console.log("Creation of sample data done");
 };
