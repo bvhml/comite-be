@@ -17,7 +17,10 @@ router.get('/', async (req, res) => {
   try {
     jwt.verify(extractToken(req),process.env.SECRET);
 
-    const vehiculos = await req.context.models.Vehiculo.findAll({
+    const vehiculos = await req.context.models.Vehiculo.findAll({order: 
+      [
+        ['id', 'ASC'],
+      ],
         raw:true
       });
     return res.status(OK).send(vehiculos);
