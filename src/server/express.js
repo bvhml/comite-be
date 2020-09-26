@@ -61,6 +61,23 @@ const createSampleData = async () => {
         asientos: '4',
         color: 'Negro'
     }
-);
+  );
+
+  await models.MantenimientoVehiculo.create(
+    {
+      descripcion: 'Servicio menor',
+      lugar: 'VIFRIO GT',
+      fecha: '23/09/2020',
+      vehiculoId: 1,
+    }
+  );
+  await models.MantenimientoVehiculo.create(
+    {
+      descripcion: 'Servicio mayor',
+      lugar: 'TALLERES PROFESIONALES GT',
+      fecha: '25/09/2020',
+      vehiculoId: 1,
+    }
+  );
   console.log("Creation of sample data done");
 };
