@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
     jwt.verify(extractToken(req),process.env.SECRET);
 
     const users = await req.context.models.User.findAll({
-      attributes:['id','username','rol'],
+      attributes:['id','username','nombre','apellido','edad','dpi','rol'],
         raw:true
       });
     return res.status(OK).send(users);
@@ -104,7 +104,7 @@ router.post('/login', async (req, res) => {
  *                      Post SignUp - "POST /register"
  ******************************************************************************/
 router.post('/register', async (req, res) => {
-  const {username,password,nombre,apellido,rol,email} = req.body;
+  const {username,password,nombre,apellido,edad,dpi,rol} = req.body;
   const buscarUsuario = await req.context.models.User.findOne({
     attributes:['username'],
       where: {
@@ -126,12 +126,13 @@ router.post('/register', async (req, res) => {
     bcrypt.hash(password, saltRounds,(err, hash) => {
       req.context.models.User.create(
         {
-          username: username,
+          username,
           password: hash,
-          nombre:nombre,
-          apellido:apellido,
-          rol:rol,
-          email:email
+          nombre,
+          apellido,
+          rol,
+          edad,
+          dpi,
         },
       ).then((user) => {
         if (user === null) {

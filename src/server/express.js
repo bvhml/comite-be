@@ -43,6 +43,9 @@ const createSampleData = async () => {
       password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', //admin
       nombre:'Admin example',
       apellido:'Admin example',
+      edad:'25',
+      dpi:'2739977850101',
+      rol:'1',
     },
   );
 
