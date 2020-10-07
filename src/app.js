@@ -9,6 +9,7 @@ import routes from './routes';
 const usersBaseURL = '/usuarios';
 const vehiculosBaseURL = '/vehiculos';
 const mantenimientoVehiculoBaseURL = '/mantenimiento-vehiculo';
+const viajeBaseURL = '/viaje';
 const app = express();
 // Application-Level Middleware
 app.disable('x-powered-by');
@@ -27,6 +28,7 @@ app.use(async (req, res, next) => {
 app.use(`${usersBaseURL}`, routes.usuario);
 app.use(`${vehiculosBaseURL}`, routes.vehiculo);
 app.use(`${mantenimientoVehiculoBaseURL}`, routes.mantenimientoVehiculo);
+app.use(`${viajeBaseURL}`, routes.viaje);
 // Start
 
 export default app;

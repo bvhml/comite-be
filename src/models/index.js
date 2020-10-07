@@ -17,6 +17,12 @@ const models = {
   User: sequelize.import('./usuario'),
   Vehiculo: sequelize.import('./vehiculo'),
   MantenimientoVehiculo: sequelize.import('./mantenimientoVehiculo'),
+  Viaje: sequelize.import('./viaje'),
+  Conductor: sequelize.import('./conductor'),
+  VehiculoConductor: sequelize.import('./vehiculoConductor'),
+  Estatus: sequelize.import('./estatus'),
+  HistorialViaje: sequelize.import('./historialViaje'),
+  Ruta: sequelize.import('./ruta'),
 };
 
 Object.keys(models).forEach(key => {

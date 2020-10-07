@@ -4,10 +4,17 @@ import jwt from 'jsonwebtoken';
 import { BAD_REQUEST, CREATED, OK, NOT_FOUND, NO_CONTENT  } from 'http-status-codes';
 import { logger } from '../shared/Logger';
 import extractToken from '../shared/extractToken';
+import nodemailer from 'nodemailer';
 
 const router = Router();
 
-
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.MAILACCOUNT,
+    pass: process.env.MAILPWD,
+  },
+});
 
 /******************************************************************************
  *                      Get All Users - "GET /"
@@ -117,13 +124,12 @@ router.post('/register', async (req, res) => {
     return res.status(OK).json({
       status:BAD_REQUEST,
       success: false,
-      token: null,
       err: 'El usuario ya esta en uso, seleccione uno diferente'
     });
   }else{
     const saltRounds = 10;
 
-    bcrypt.hash(password, saltRounds,(err, hash) => {
+    bcrypt.hash(password, saltRounds,async (err, hash) => {
       req.context.models.User.create(
         {
           username,
@@ -134,20 +140,32 @@ router.post('/register', async (req, res) => {
           edad,
           dpi,
         },
-      ).then((user) => {
+      ).then(async (user) => {
         if (user === null) {
           return res.status(BAD_REQUEST).json({
             status:BAD_REQUEST,
             success: true,
             token: null,
-            err: 'Ha ocurrido un error al insertar nuevo usuario'
+            err: 'Ha ocurrido un error al crear nuevo usuario'
           });
         }
         else{
+
+          let body = `<h3>Bienvenido</h3><br><br>
+            
+          Tu usuario es: ${username} <br>
+          y tu contraseña es: ${password} <br><br>
+          
+          Puedes ingresar a la pagina <a href="http://localhost:3000/">aquí</a><br><br><br>
+          
+          Saludos cordiales,<br><br>
+          
+          Victor Morales`;
+          enviarNotificacion(process.env.MAILACCOUNT,username,"Bienvenido al sistema de flotillas",body);
+
           return res.status(OK).json({
             status:OK,
             success: true,
-            token: null,
             msg: 'Creado con exito '
           });
         }
@@ -159,7 +177,6 @@ router.post('/register', async (req, res) => {
         return res.status(BAD_REQUEST).json({
           status:BAD_REQUEST,
           success: false,
-          token: null,
           err: 'El Correo ya esta en uso'
         });
     });
@@ -239,5 +256,16 @@ router.post('/resetmypassword', async (req, res) => {
     });
   }
 });
+
+//Definicion de Funciones
+
+const enviarNotificacion = async (from, to, subject, html)=>{
+  await transporter.sendMail({
+    from, // sender address
+    to, // list of receivers
+    subject, // Subject line
+    html
+  });
+};
 
 export default router;

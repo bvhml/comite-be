@@ -39,13 +39,13 @@ sequelize.sync({ force: true }).then(async () => {
 const createSampleData = async () => {
   await models.User.create(
     {
-      username: 'a@b.com',
+      username: 'byrito95@gmail.com',
       password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', //admin
       nombre:'Admin example',
       apellido:'Admin example',
       edad:'25',
       dpi:'2739977850101',
-      rol:'1',
+      rol:'4',
     },
   );
 
@@ -74,6 +74,7 @@ const createSampleData = async () => {
       vehiculoId: 1,
     }
   );
+  
   await models.MantenimientoVehiculo.create(
     {
       descripcion: 'Servicio mayor',
@@ -82,5 +83,16 @@ const createSampleData = async () => {
       vehiculoId: 1,
     }
   );
+  
+  await models.Conductor.create({
+    tipo_licencia: 'C',
+    exp_licencia: '12/12/2030',
+    disponibilidad: '1',
+    id_usuario: 1,
+  })
+  
+  await models.Estatus.create({
+    estatus: 'Disponible',
+  })
   console.log("Creation of sample data done");
 };
