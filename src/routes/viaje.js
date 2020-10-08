@@ -121,8 +121,6 @@ router.put('/', async (req, res) => {
       //jwt.verify(extractToken(req),process.env.SECRET);
       const { viaje } = req.body;
       
-      //Verifico si dentro de viaje viene un id
-      if (viaje.id !== undefined && viaje.id !== null && viaje.id !== '' ) {
       
       const verificarMantenimiento = await req.context.models.Viaje.findOne({
           where: {
@@ -141,30 +139,22 @@ router.put('/', async (req, res) => {
             id_estatus: viaje.id_estatus || null,
             id_usuario: viaje.id_usuario || null,
             id_conductor: viaje.id_conductor || null,
+            id_director: viaje.id_director || null,
           },
           {
               returning: true, where: { id: viaje.id } 
           }
       );
+
+      //Agregar rutas de viaje a tabla RUTAS
+      await viaje.rutas
+      .filter((ruta)=>ruta.modificado !== 'false')
+      .map((ruta)=>req.context.models.Ruta.update({...ruta},{returning: true, where: { id: ruta.id } }));
+
       return res.status(OK).json('Viaje actualizado exitosamente.');
       }else{
 
-      return res.status(OK).json('Viaje creado exitosamente.');
-      }
-      }else{
-
-      await req.context.models.Viaje.create(
-          {
-            coordenada_inicio: viaje.coordenada_inicio || null,
-            ubicacion_inicio: viaje.ubicacion_inicio || null,
-            coordenada_fin: viaje.coordenada_fin || null,
-            ubicacion_fin: viaje.ubicacion_fin || null,
-            id_estatus: viaje.id_estatus || null,
-            id_usuario: viaje.coordenada_fin || null,
-            id_conductor: viaje.ubicacion_fin || null,
-          }
-      );
-      return res.status(OK).json('Viaje creado exitosamente.');
+        return res.status(OK).json('Error, viaje no encontrado para actualizar');
       }
       //logger.info(`Viaje creada por: ${viaje.username}`)
 
