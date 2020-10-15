@@ -15,6 +15,13 @@ const ruta = (sequelize, DataTypes) => {
             key: 'id', // 'id' refers to column name in usuarios table
             },
         },
+        id_conductor: {
+          type: DataTypes.INTEGER,
+          references: {
+          model: 'conductores', // 'usuarios' refers to table name
+          key: 'id', // 'id' refers to column name in usuarios table
+          }
+      },
         id_usuario: {
             type: DataTypes.INTEGER,
             references: {
