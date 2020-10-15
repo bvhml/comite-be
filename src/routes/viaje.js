@@ -20,7 +20,7 @@ let transporter = nodemailer.createTransport({
 /******************************************************************************
  *                      Get All Viajes de Usuario especifico - "GET /:id_usuario"
  ******************************************************************************/
-router.get('/:id_usuario', async (req, res) => {
+router.get('/misviajes/:id_usuario', async (req, res) => {
 
   try {
     //jwt.verify(extractToken(req),process.env.SECRET);
