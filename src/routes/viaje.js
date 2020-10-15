@@ -47,7 +47,7 @@ router.get('/:id_usuario', async (req, res) => {
 router.get('/:viaje_id', async (req, res) => {
 
   try {
-    //jwt.verify(extractToken(req),process.env.SECRET);
+    jwt.verify(extractToken(req),process.env.SECRET);
 
     const viaje = await req.context.models.Viaje.findOne(
       {where: {id: req.params.viaje_id}}
