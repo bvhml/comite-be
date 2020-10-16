@@ -211,7 +211,7 @@ router.put('/register', async (req, res) => {
     const saltRounds = 10;
 
     bcrypt.hash(password, saltRounds,async (err, hash) => {
-      req.context.models.User.update(
+      await req.context.models.User.update(
         {
           username,
           password: hash,
@@ -224,7 +224,7 @@ router.put('/register', async (req, res) => {
             returning: true, where: { username } 
            }
       );
-      
+      return res.status(OK).json('Usuario editado con exito');
     });
   }else{
     await req.context.models.User.update(
