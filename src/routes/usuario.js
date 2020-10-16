@@ -241,10 +241,12 @@ router.put('/register', async (req, res) => {
          }
     );
 
+    return res.status(OK).json('Usuario editado con exito');
+
   }
   
   } catch (error) {
-      
+    return res.status(BAD_REQUEST).json('Error al editar usuario');
     }
 });
 
