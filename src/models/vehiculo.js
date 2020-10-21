@@ -44,6 +44,10 @@ const vehiculo = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         unique: false,
       },
+      piloto:{
+        type: DataTypes.INTEGER,
+        unique: false,
+      },
       color:{
         type: DataTypes.STRING,
         unique: false,
