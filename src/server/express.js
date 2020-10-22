@@ -37,17 +37,30 @@ sequelize.sync({ force: true }).then(async () => {
 });
 
 const createSampleData = async () => {
+
   await models.User.create(
     {
       username: 'byrito95@gmail.com',
       password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', //admin
-      nombre:'Admin example',
-      apellido:'Admin example',
+      nombre:'Byron',
+      apellido:'Morales',
       edad:'25',
       dpi:'2739977850101',
       rol:'4',
     },
   );
+  await models.User.create(
+    {
+      username: 'victormorales.uts@gmail.com',
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', //admin2
+      nombre:'Victor',
+      apellido:'Morales',
+      edad:'20',
+      dpi:'2739977850101',
+      rol:'4',
+    },
+  );
+
 
   await models.Vehiculo.create(
     {
@@ -74,7 +87,6 @@ const createSampleData = async () => {
       vehiculoId: 1,
     }
   );
-  
   await models.MantenimientoVehiculo.create(
     {
       descripcion: 'Servicio mayor',
@@ -90,9 +102,22 @@ const createSampleData = async () => {
     disponibilidad: '1',
     id_usuario: 1,
   })
+  await models.Conductor.create({
+    tipo_licencia: 'B',
+    exp_licencia: '12/12/2030',
+    disponibilidad: '1',
+    id_usuario: 2,
+  })
   
   await models.Estatus.create({
-    estatus: 'Disponible',
-  })
+    estatus: '0',
+  });
+  await models.Estatus.create({
+    estatus: '1',
+  });
+  await models.Estatus.create({
+    estatus: '2',
+  });
+  
   console.log("Creation of sample data done");
 };
