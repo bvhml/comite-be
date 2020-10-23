@@ -268,7 +268,7 @@ router.put('/', async (req, res) => {
 
             await req.context.models.Viaje.update(
               {
-                id_estatus: viaje.id_estatus || 0,
+                id_estatus: -1,
               },
               {
                   returning: true, where: { id: viaje.id } 
