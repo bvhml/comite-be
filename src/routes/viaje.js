@@ -25,6 +25,7 @@ router.get('/todos/', async (req, res) => {
   try {
     //jwt.verify(extractToken(req),process.env.SECRET);
 
+    let viajesConRutas = [];
     const viajes = await req.context.models.Viaje.findAll({
       order: 
       [
@@ -32,7 +33,17 @@ router.get('/todos/', async (req, res) => {
       ],
         raw:true
       });
-    return res.status(OK).send(viajes);
+
+      await Promise.all(viajes.map(async (viaje)=>{
+        let rutas = await req.context.models.Ruta.findAll({
+          where: {
+            id_viaje: viaje.id,
+          },
+          raw:true
+        });
+        viajesConRutas.push({...viaje,rutas:JSON.stringify(rutas)});
+      }));
+    return res.status(OK).send(viajesConRutas);
   } catch (error) {
     logger.error(error);
     return res.status(BAD_REQUEST).json('Ha ocurrido un error al obtener los viajes'); 
@@ -49,15 +60,26 @@ router.get('/misviajes/solicitante/:id_usuario', async (req, res) => {
   try {
     //jwt.verify(extractToken(req),process.env.SECRET);
 
+    let viajesConRutas = [];
     const viajes = await req.context.models.Viaje.findAll({
-      where: {id_usuario: req.params.id_usuario},
+      where: {id_solicitante: req.params.id_usuario},
       order: 
       [
         ['id', 'ASC'],
       ],
         raw:true
       });
-    return res.status(OK).send(viajes);
+
+      await Promise.all(viajes.map(async (viaje)=>{
+        let rutas = await req.context.models.Ruta.findAll({
+          where: {
+            id_viaje: viaje.id,
+          },
+          raw:true
+        });
+        viajesConRutas.push({...viaje,rutas:JSON.stringify(rutas)});
+      }));
+    return res.status(OK).send(viajesConRutas);
   } catch (error) {
     logger.error(error);
     return res.status(BAD_REQUEST).json('Ha ocurrido un error al obtener los viajes'); 
@@ -72,16 +94,27 @@ router.get('/misviajes/director/:id_usuario', async (req, res) => {
 
   try {
     //jwt.verify(extractToken(req),process.env.SECRET);
-
+    
+    let viajesConRutas = [];
     const viajes = await req.context.models.Viaje.findAll({
-      where: {id_usuario: req.params.id_usuario},
+      where: {id_director: req.params.id_usuario},
       order: 
       [
         ['id', 'ASC'],
       ],
         raw:true
       });
-    return res.status(OK).send(viajes);
+
+      await Promise.all(viajes.map(async (viaje)=>{
+        let rutas = await req.context.models.Ruta.findAll({
+          where: {
+            id_viaje: viaje.id,
+          },
+          raw:true
+        });
+        viajesConRutas.push({...viaje,rutas:JSON.stringify(rutas)});
+      }));
+    return res.status(OK).send(viajesConRutas);
   } catch (error) {
     logger.error(error);
     return res.status(BAD_REQUEST).json('Ha ocurrido un error al obtener los viajes'); 
@@ -99,10 +132,19 @@ router.get('/:viaje_id', async (req, res) => {
   try {
     jwt.verify(extractToken(req),process.env.SECRET);
 
+    let viajeConRutas = [];
     const viaje = await req.context.models.Viaje.findOne(
       {where: {id: req.params.viaje_id}}
     );
-    return res.status(OK).send(viaje);
+
+      let rutas = await req.context.models.Ruta.findAll({
+        where: {
+          id_viaje: viaje.id,
+        },
+        raw:true
+      });
+      viajeConRutas.push({...viaje,rutas:JSON.stringify(rutas)});
+    return res.status(OK).send(viajeConRutas);
     
   } catch (error) {
     logger.error(error);
