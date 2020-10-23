@@ -19,6 +19,7 @@ const viaje = (sequelize, DataTypes) => {
               references: {
               model: 'usuarios', // 'conductores' refers to table name
               key: 'id', // 'id' refers to column name in conductores table
+              allowNull: true,
               }
       },
     },

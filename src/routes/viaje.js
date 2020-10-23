@@ -171,21 +171,22 @@ router.get('/:viaje_id', async (req, res) => {
             }
         );
         
-        //Notificar a Director
-        const correoDirector = await req.context.models.User.findOne({where: {id: viaje.id_director}});
-        let body = 
-        `<h3>Estimado Director</h3><br>
-        
-        Se ha ingresado una nueva solicitud de viaje.<br><br><br><br>
-        
-        Saludos cordiales,<br><br><br>
-        
-        Victor Morales`;
+        if (viaje.id_director) {
+          //Notificar a Director
+          const correoDirector = await req.context.models.User.findOne({where: {id: viaje.id_director}});
+          let body = 
+          `<h3>Estimado Director</h3><br>
+          
+          Se ha ingresado una nueva solicitud de viaje.<br><br><br><br>
+          
+          Saludos cordiales,<br><br><br>
+          
+          Victor Morales`;
 
-        enviarNotificacion(process.env.MAILACCOUNT,correoDirector.dataValues.username,"Solicitud de viaje",body);
-
+          enviarNotificacion(process.env.MAILACCOUNT,correoDirector.dataValues.username,"Solicitud de viaje",body);
+        }
         //Agregar rutas de viaje a tabla RUTAS
-        viaje.rutas.map((ruta)=>req.context.models.Ruta.create({...ruta, id_conductor: 1, id_viaje:viaje_creado.dataValues.id}))
+        viaje.rutas.map((ruta)=>req.context.models.Ruta.create({...ruta, id_viaje:viaje_creado.dataValues.id}))
 
         await t.commit();
         return res.status(OK).json('Viaje creado exitosamente.');

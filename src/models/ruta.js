@@ -28,6 +28,7 @@ const ruta = (sequelize, DataTypes) => {
         references: {
         model: 'conductores', // 'usuarios' refers to table name
         key: 'id', // 'id' refers to column name in usuarios table
+        allowNull: true,
         },
       },
     },
