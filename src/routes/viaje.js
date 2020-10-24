@@ -277,7 +277,7 @@ router.put('/', async (req, res) => {
           return res.status(OK).json('Viaje denegado exitosamente.');
         }
       }else{
-        return res.status(OK).json('Error, viaje no encontrado para actualizar');
+        return res.status(BAD_REQUEST).json('Error, viaje no encontrado para actualizar');
       }
       
       
@@ -286,7 +286,7 @@ router.put('/', async (req, res) => {
 
   } catch (error) {
     logger.error(`Error al crear viaje`, error);
-    return res.status(BAD_REQUEST).json('Ha ocurrido un error al crear un viaje.');
+    return res.status(BAD_REQUEST).json('Ha ocurrido un error al actualizar un viaje.');
   }
 });
 
