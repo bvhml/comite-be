@@ -263,7 +263,7 @@ router.put('/', async (req, res) => {
             );
             return res.status(OK).json('Viaje actualizado exitosamente.');
 
-          //INICIAR viaje por ADMIN
+          //COMPLETAR viaje por ADMIN
           case 4:
             await req.context.models.Viaje.update(
               {
