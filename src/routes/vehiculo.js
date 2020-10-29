@@ -32,6 +32,44 @@ router.get('/', async (req, res) => {
 });
 
 /******************************************************************************
+ *                      Get All Vehiculos JOIN conductores (usuarios con rol=1) - "GET /"
+ ******************************************************************************/
+router.get('/asignados', async (req, res) => {
+
+  try {
+    //jwt.verify(extractToken(req),process.env.SECRET);
+    let pilotosConVehiculos = [];
+    const pilotos = await req.context.models.User.findAll(
+      {
+      order: [
+        ['id', 'ASC'],
+      ],
+      where: {
+          rol:1
+        },
+        raw:true
+      });
+
+      await Promise.all(pilotos.map(async (piloto)=>{
+        let vehiculos = await req.context.models.Vehiculo.findAll({
+          where: {
+            piloto: piloto.id,
+          },
+          raw:true
+        });
+        pilotosConVehiculos.push({...piloto,vehiculos:JSON.stringify(vehiculos)});
+      }));
+
+    return res.status(OK).send(pilotosConVehiculos);
+  } catch (error) {
+    logger.error(error);
+    return res.status(BAD_REQUEST).json('Ha ocurrido un error al obtener los pilotos con sus vehiculos'); 
+  }
+  
+});
+
+
+/******************************************************************************
  *                      Get specific vehiculo - "GET /:vehiculoId"
  ******************************************************************************/
 router.get('/:vehiculoId', async (req, res) => {
@@ -85,6 +123,7 @@ router.post('/', async (req, res) => {
                 transmision: vehiculo.transmision || null,
                 asientos: vehiculo.asientos || null,
                 color: vehiculo.color || null,
+                piloto: vehiculo.piloto || null,
             },
             {
                 returning: true, where: { id: vehiculo.id } 
@@ -106,6 +145,7 @@ router.post('/', async (req, res) => {
                 transmision: vehiculo.transmision || null,
                 asientos: vehiculo.asientos || null,
                 color: vehiculo.color || null,
+                piloto: vehiculo.piloto || null,
             }
         );
 
@@ -127,6 +167,7 @@ router.post('/', async (req, res) => {
                 transmision: vehiculo.transmision || null,
                 asientos: vehiculo.asientos || null,
                 color: vehiculo.color || null,
+                piloto: vehiculo.piloto || null,
             } 
         );
         return res.status(OK).json('Vehiculo creado exitosamente.');

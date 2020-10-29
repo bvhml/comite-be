@@ -41,7 +41,7 @@ const createSampleData = async () => {
   await models.User.create(
     {
       username: 'byrito95@gmail.com',
-      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', //admin
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
       nombre:'Byron',
       apellido:'Morales',
       edad:'25',
@@ -51,13 +51,82 @@ const createSampleData = async () => {
   );
   await models.User.create(
     {
-      username: 'victormorales.uts@gmail.com',
-      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', //admin2
-      nombre:'Victor',
-      apellido:'Morales',
-      edad:'20',
+      username: 'albasagastume@gmail.com',
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
+      nombre:'Alba',
+      apellido:'Sagastume',
+      edad:'25',
       dpi:'2739977850101',
       rol:'4',
+    },
+  );
+  
+  await models.User.create(
+    {
+      username: 'administrador1@gmail.com',
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
+      nombre:'Joel',
+      apellido:'Perez',
+      edad:'20',
+      dpi:'2739977850101',
+      rol:'3',
+    },
+  );
+  await models.User.create(
+    {
+      username: 'administrador2@gmail.com',
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
+      nombre:'Benedicto',
+      apellido:'Guerra',
+      edad:'20',
+      dpi:'2739977850101',
+      rol:'3',
+    },
+  );
+
+  await models.User.create(
+    {
+      username: 'solicitante1@gmail.com',
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
+      nombre:'Gerardo',
+      apellido:'Gonzalez',
+      edad:'20',
+      dpi:'2739977850101',
+      rol:'2',
+    },
+  );
+  await models.User.create(
+    {
+      username: 'solicitante2@gmail.com',
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
+      nombre:'Jesus',
+      apellido:'Jerez',
+      edad:'20',
+      dpi:'2739977850101',
+      rol:'2',
+    },
+  );
+  
+  await models.User.create(
+    {
+      username: 'piloto1@gmail.com',
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
+      nombre:'Marvin',
+      apellido:'Zepeda',
+      edad:'20',
+      dpi:'2739977850101',
+      rol:'1',
+    },
+  );
+  await models.User.create(
+    {
+      username: 'piloto2@gmail.com',
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
+      nombre:'Jose',
+      apellido:'Rodriguez',
+      edad:'20',
+      dpi:'2739977850101',
+      rol:'1',
     },
   );
 
@@ -75,7 +144,8 @@ const createSampleData = async () => {
         toneladas: '1',
         transmision: 'Mecanica',
         asientos: '4',
-        color: 'Negro'
+        color: 'Negro',
+        piloto: 7,
     }
   );
 
@@ -95,19 +165,6 @@ const createSampleData = async () => {
       vehiculoId: 1,
     }
   );
-  
-  await models.Conductor.create({
-    tipo_licencia: 'C',
-    exp_licencia: '12/12/2030',
-    disponibilidad: '1',
-    id_usuario: 1,
-  })
-  await models.Conductor.create({
-    tipo_licencia: 'B',
-    exp_licencia: '12/12/2030',
-    disponibilidad: '1',
-    id_usuario: 2,
-  })
   
   await models.Estatus.create({
     estatus: '0',

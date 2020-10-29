@@ -46,7 +46,11 @@ const vehiculo = (sequelize, DataTypes) => {
       },
       piloto:{
         type: DataTypes.INTEGER,
-        unique: false,
+        references: {
+          model: 'usuarios', // 'usuarios' refers to table name
+          key: 'id', // 'id' refers to column name in usuarios table
+          allowNull: true,
+        },
       },
       color:{
         type: DataTypes.STRING,
