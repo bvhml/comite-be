@@ -242,7 +242,7 @@ router.put('/', async (req, res) => {
                     }
                 );
                 //Agregar rutas de viaje que ya contienen CONDUCTOR
-                await viaje.rutas.map((ruta)=>req.context.models.Ruta.update({...ruta},{returning: true, where: { id: ruta.id } }));
+                await viaje.rutas.map((ruta)=>req.context.models.Ruta.update({ id_conductor: ruta.id_conductor},{returning: true, where: { id: ruta.id } }));
           
                 return res.status(OK).json('Viaje actualizado exitosamente.');
                 
