@@ -33,7 +33,7 @@ const vehiculo = (sequelize, DataTypes) => {
         unique: false,
       },
       toneladas:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: false,
       },
       transmision:{
