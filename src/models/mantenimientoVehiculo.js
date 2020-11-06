@@ -12,6 +12,10 @@ const mantenimientoVehiculo = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: false,
       },
+      eliminado: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
       vehiculoId: {
             type: DataTypes.INTEGER,
             references: {

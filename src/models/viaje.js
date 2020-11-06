@@ -19,6 +19,10 @@ const viaje = (sequelize, DataTypes) => {
               allowNull: true,
               }
       },
+      eliminado: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
       {
         timestamps: true,

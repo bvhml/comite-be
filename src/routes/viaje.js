@@ -18,7 +18,7 @@ let transporter = nodemailer.createTransport({
 });
 
 /******************************************************************************
- *                      Get All Viajes - "GET /:id_usuario"
+ *                      Get All Viajes - "GET /"
  ******************************************************************************/
 router.get('/todos/', async (req, res) => {
 
@@ -157,47 +157,51 @@ router.get('/:viaje_id', async (req, res) => {
  *                      Create viaje - "POST /"
  ******************************************************************************/
 
-  router.post('/', async (req, res) => {
-
-    const t = await sequelize.transaction();
+router.post('/', async (req, res) => {
     try {
-        //jwt.verify(extractToken(req),process.env.SECRET);
-        const { viaje } = req.body;
-        let viaje_creado = await req.context.models.Viaje.create(
-            {
-              id_estatus: viaje.id_estatus || null,
-              id_solicitante: viaje.id_solicitante || null,
-              id_director: viaje.id_director || null,
-            }
-        );
-        
-        if (viaje.id_director) {
-          //Notificar a Director
-          const correoDirector = await req.context.models.User.findOne({where: {id: viaje.id_director}});
-          let body = 
-          `<h3>Estimado Director</h3><br>
+      jwt.verify(extractToken(req),process.env.SECRET);
+      const t = await sequelize.transaction();
+      try {
+          const { viaje } = req.body;
+          let viaje_creado = await req.context.models.Viaje.create(
+              {
+                id_estatus: viaje.id_estatus || null,
+                id_solicitante: viaje.id_solicitante || null,
+                id_director: viaje.id_director || null,
+              }
+          );
           
-          Se ha ingresado una nueva solicitud de viaje.<br><br><br><br>
-          
-          Saludos cordiales,<br><br><br>
-          
-          Victor Morales`;
+          if (viaje.id_director) {
+            //Notificar a Director
+            const correoDirector = await req.context.models.User.findOne({where: {id: viaje.id_director}});
+            let body = 
+            `<h3>Estimado Director</h3><br>
+            
+            Se ha ingresado una nueva solicitud de viaje.<br><br><br><br>
+            
+            Saludos cordiales,<br><br><br>
+            
+            Victor Morales`;
 
-          enviarNotificacion(process.env.MAILACCOUNT,correoDirector.dataValues.username,"Solicitud de viaje",body);
-        }
-        //Agregar rutas de viaje a tabla RUTAS
-        viaje.rutas.map((ruta)=>req.context.models.Ruta.create({...ruta, id_viaje:viaje_creado.dataValues.id}))
+            enviarNotificacion(process.env.MAILACCOUNT,correoDirector.dataValues.username,"Solicitud de viaje",body);
+          }
+          //Agregar rutas de viaje a tabla RUTAS
+          viaje.rutas.map((ruta)=>req.context.models.Ruta.create({...ruta, id_viaje:viaje_creado.dataValues.id}))
 
-        await t.commit();
-        return res.status(OK).json('Viaje creado exitosamente.');
-        
-        //logger.info(`Viaje creada por: ${viaje.username}`)
-  
+          await t.commit();
+          return res.status(OK).json('Viaje creado exitosamente.');
+          
+          //logger.info(`Viaje creada por: ${viaje.username}`)
+    
+      } catch (error) {
+        await t.rollback();
+        logger.error(`Error al crear viaje`, error);
+        return res.status(BAD_REQUEST).json('Ha ocurrido un error al crear un viaje.');
+      }
     } catch (error) {
-      await t.rollback();
-      logger.error(`Error al crear viaje`, error);
-      return res.status(BAD_REQUEST).json('Ha ocurrido un error al crear un viaje.');
+      return res.status(BAD_REQUEST).json('Ha ocurrido un error, Acceso denegado');
     }
+      
   });
 
   /******************************************************************************
@@ -206,100 +210,119 @@ router.get('/:viaje_id', async (req, res) => {
 
 router.put('/', async (req, res) => {
   try {
-      //jwt.verify(extractToken(req),process.env.SECRET);
-      const { viaje } = req.body;
-      
-      const verificarViaje = await req.context.models.Viaje.findOne({
-        where: {
-          id: viaje.id,
-        },
-        raw:true
-      });
+    jwt.verify(extractToken(req),process.env.SECRET);
+    const { viaje } = req.body;
 
-      if (verificarViaje) {
-        switch (viaje.id_estatus) {
-          //APROBAR viaje por DIRECTOR
-          case 1:
-              await req.context.models.Viaje.update(
-                  {
-                    id_estatus: viaje.id_estatus || 0,
-                  },
-                  {
-                      returning: true, where: { id: viaje.id } 
-                  }
-              );
-              return res.status(OK).json('Viaje actualizado exitosamente.');
-          //ASIGNAR CONDUCTORES A CADA RUTA por ADMIN
-          case 2:
-              const t = await sequelize.transaction();
-              try {
+    if (viaje.eliminado) {
+      try {
+        await req.context.models.Viaje.update(
+          {
+            eliminado: viaje.eliminado || true,
+          },
+          {
+              returning: true, where: { id: viaje.id } 
+          }
+        );
+        return res.status(OK).json('Viaje eliminado exitosamente.');
+      } catch (error) {
+        return res.status(BAD_REQUEST).json('Ha ocurrido un error al eliminar un viaje.');
+      }
+        
+    } else {
+      try {
+        const verificarViaje = await req.context.models.Viaje.findOne({
+          where: {
+            id: viaje.id,
+          },
+          raw:true
+        });
+  
+        if (verificarViaje) {
+          switch (viaje.id_estatus) {
+            //APROBAR viaje por DIRECTOR
+            case 1:
                 await req.context.models.Viaje.update(
                     {
-                      id_estatus: viaje.id_estatus || null,
+                      id_estatus: viaje.id_estatus || 0,
                     },
                     {
                         returning: true, where: { id: viaje.id } 
                     }
                 );
-                //Agregar rutas de viaje que ya contienen CONDUCTOR
-                await viaje.rutas.map((ruta)=>req.context.models.Ruta.update({ id_conductor: ruta.id_conductor},{returning: true, where: { id: ruta.id } }));
-          
                 return res.status(OK).json('Viaje actualizado exitosamente.');
-                
-              } catch (error) {
-                await t.rollback();
-                return res.status(BAD_REQUEST).json('Ha ocurrido un error al actualizar el viaje.');
-              }
-          
-              //INICIAR viaje por ADMIN
-          case 3:
-            await req.context.models.Viaje.update(
-              {
-                id_estatus: viaje.id_estatus || 0,
-              },
-              {
-                  returning: true, where: { id: viaje.id } 
-              }
+            //ASIGNAR CONDUCTORES A CADA RUTA por ADMIN
+            case 2:
+                const t = await sequelize.transaction();
+                try {
+                  await req.context.models.Viaje.update(
+                      {
+                        id_estatus: viaje.id_estatus || null,
+                      },
+                      {
+                          returning: true, where: { id: viaje.id } 
+                      }
+                  );
+                  //Agregar rutas de viaje que ya contienen CONDUCTOR
+                  await viaje.rutas.map((ruta)=>req.context.models.Ruta.update({ id_conductor: ruta.id_conductor},{returning: true, where: { id: ruta.id } }));
+            
+                  return res.status(OK).json('Viaje actualizado exitosamente.');
+                  
+                } catch (error) {
+                  await t.rollback();
+                  return res.status(BAD_REQUEST).json('Ha ocurrido un error al actualizar el viaje.');
+                }
+            
+                //INICIAR viaje por ADMIN
+            case 3:
+              await req.context.models.Viaje.update(
+                {
+                  id_estatus: viaje.id_estatus || 0,
+                },
+                {
+                    returning: true, where: { id: viaje.id } 
+                }
+              );
+              return res.status(OK).json('Viaje actualizado exitosamente.');
+  
+            //COMPLETAR viaje por ADMIN
+            case 4:
+              await req.context.models.Viaje.update(
+                {
+                  id_estatus: viaje.id_estatus || 0,
+                },
+                {
+                    returning: true, where: { id: viaje.id } 
+                }
+              );
+              return res.status(OK).json('Viaje actualizado exitosamente.');
+  
+            //DENEGAR por ADMIN(Status negativo)
+            default:
+  
+              await req.context.models.Viaje.update(
+                {
+                  id_estatus: -1,
+                },
+                {
+                    returning: true, where: { id: viaje.id } 
+                }
             );
-            return res.status(OK).json('Viaje actualizado exitosamente.');
-
-          //COMPLETAR viaje por ADMIN
-          case 4:
-            await req.context.models.Viaje.update(
-              {
-                id_estatus: viaje.id_estatus || 0,
-              },
-              {
-                  returning: true, where: { id: viaje.id } 
-              }
-            );
-            return res.status(OK).json('Viaje actualizado exitosamente.');
-
-          //DENEGAR por ADMIN(Status negativo)
-          default:
-
-            await req.context.models.Viaje.update(
-              {
-                id_estatus: -1,
-              },
-              {
-                  returning: true, where: { id: viaje.id } 
-              }
-          );
-          return res.status(OK).json('Viaje denegado exitosamente.');
+            return res.status(OK).json('Viaje denegado exitosamente.');
+          }
+        }else{
+          return res.status(BAD_REQUEST).json('Error, viaje no encontrado para actualizar');
         }
-      }else{
-        return res.status(BAD_REQUEST).json('Error, viaje no encontrado para actualizar');
-      }
-      
-      
-      
-      //logger.info(`Viaje creada por: ${viaje.username}`)
-
-  } catch (error) {
-    logger.error(`Error al crear viaje`, error);
-    return res.status(BAD_REQUEST).json('Ha ocurrido un error al actualizar un viaje.');
-  }
+        //logger.info(`Viaje creada por: ${viaje.username}`)
+  
+      } catch (error) {
+          logger.error(`Error al crear viaje`, error);
+          return res.status(BAD_REQUEST).json('Ha ocurrido un error al actualizar un viaje.');
+        }
+    }
+    
+    } catch (error) {
+      return res.status(BAD_REQUEST).json('Ha ocurrido un error, Acceso denegado');
+    }
 });
 
 

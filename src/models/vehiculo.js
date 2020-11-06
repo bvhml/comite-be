@@ -55,7 +55,11 @@ const vehiculo = (sequelize, DataTypes) => {
       color:{
         type: DataTypes.STRING,
         unique: false,
-      }
+      },
+      eliminado: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
       {
         timestamps: true,

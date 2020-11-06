@@ -16,6 +16,14 @@ const ruta = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         unique: false,
       },
+      notas: {
+        type: DataTypes.STRING,
+        unique: false,
+      },
+      eliminado: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
       id_viaje: {
           type: DataTypes.INTEGER,
           references: {

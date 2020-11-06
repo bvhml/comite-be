@@ -26,6 +26,9 @@ router.get('/', async (req, res) => {
 
     const users = await req.context.models.User.findAll({
       attributes:['id','username','nombre','apellido','edad','dpi','rol'],
+      where:{
+        eliminado: false,
+      },
         raw:true
       });
     return res.status(OK).send(users);
@@ -111,83 +114,79 @@ router.post('/login', async (req, res) => {
  *                      Post SignUp - "POST /register"
  ******************************************************************************/
 router.post('/register', async (req, res) => {
-
-
   try {
-    
-  
-  const {username,password,nombre,apellido,edad,dpi,rol} = req.body;
-  const buscarUsuario = await req.context.models.User.findOne({
-    attributes:['username'],
-      where: {
-        username:username,
-      },
-      raw:true
-    }
-  );
-  if (buscarUsuario){
-    return res.status(OK).json({
-      status:BAD_REQUEST,
-      success: false,
-      err: 'El usuario ya esta en uso, seleccione uno diferente'
-    });
-  }else{
-    const saltRounds = 10;
-
-    bcrypt.hash(password, saltRounds,async (err, hash) => {
-      req.context.models.User.create(
-        {
+    const { username, password, nombre, apellido, edad, dpi, rol } = req.body;
+    const buscarUsuario = await req.context.models.User.findOne({
+      attributes:['username'],
+        where: {
           username,
-          password: hash,
-          nombre,
-          apellido,
-          rol,
-          edad,
-          dpi,
         },
-      ).then(async (user) => {
-        if (user === null) {
+        raw:true
+      }
+    );
+    if (buscarUsuario){
+      return res.status(OK).json({
+        status:BAD_REQUEST,
+        success: false,
+        err: 'El nombre usuario ya esta en uso, seleccione uno diferente'
+      });
+    }else {
+      const saltRounds = 10;
+
+      bcrypt.hash(password, saltRounds,async (err, hash) => {
+        req.context.models.User.create(
+          {
+            username,
+            password: hash,
+            nombre,
+            apellido,
+            rol,
+            edad,
+            dpi,
+          },
+        ).then(async (user) => {
+          if (user === null) {
+            return res.status(BAD_REQUEST).json({
+              status:BAD_REQUEST,
+              success: true,
+              token: null,
+              err: 'Ha ocurrido un error al crear nuevo usuario'
+            });
+          }
+          else{
+
+            let body = `<h3>Bienvenido</h3><br><br>
+              
+            Tu usuario es: ${username} <br>
+            y tu contraseña es: ${password} <br><br>
+            
+            Puedes ingresar a la pagina <a href="http://localhost:3000/">aquí</a><br><br><br>
+            
+            Saludos cordiales,<br><br>
+            
+            Victor Morales`;
+            enviarNotificacion(process.env.MAILACCOUNT,username,"Bienvenido al sistema de flotillas",body);
+
+            return res.status(OK).json({
+              status:OK,
+              success: true,
+              msg: 'Creado con exito '
+            });
+          }
+          
+          
+        })
+        .catch(function(err) {
+          // print the error details
           return res.status(BAD_REQUEST).json({
             status:BAD_REQUEST,
-            success: true,
-            token: null,
-            err: 'Ha ocurrido un error al crear nuevo usuario'
+            success: false,
+            err: 'El Correo ya esta en uso'
           });
-        }
-        else{
-
-          let body = `<h3>Bienvenido</h3><br><br>
-            
-          Tu usuario es: ${username} <br>
-          y tu contraseña es: ${password} <br><br>
-          
-          Puedes ingresar a la pagina <a href="http://localhost:3000/">aquí</a><br><br><br>
-          
-          Saludos cordiales,<br><br>
-          
-          Victor Morales`;
-          enviarNotificacion(process.env.MAILACCOUNT,username,"Bienvenido al sistema de flotillas",body);
-
-          return res.status(OK).json({
-            status:OK,
-            success: true,
-            msg: 'Creado con exito '
-          });
-        }
+      });
         
-        
-      })
-      .catch(function(err) {
-        // print the error details
-        return res.status(BAD_REQUEST).json({
-          status:BAD_REQUEST,
-          success: false,
-          err: 'El Correo ya esta en uso'
-        });
-    });
-      
-    });
-  }
+      });
+    }
   } catch (error) {
       
     }
@@ -197,128 +196,73 @@ router.post('/register', async (req, res) => {
  *                      PUT Edit User - "PUT /register"
  ******************************************************************************/
 router.put('/register', async (req, res) => {
-
-
-  try {
-    
-  
-  const {username,password,nombre,apellido,edad,dpi,rol} = req.body;
-
-
-    if (password !== '') {
+  try{
+    jwt.verify(extractToken(req),process.env.SECRET);
+    const { username, password, nombre, apellido, edad, dpi, rol, eliminado } = req.body;
+    if (eliminado) {
+      try {
+        await req.context.models.User.update(
+          {
+            eliminado
+          },{
+              returning: true, where: { username } 
+            }
+        );
+        return res.status(OK).json('Usuario eliminado con exito');
+      } catch (error) {
+        return res.status(OK).json('Ha ocurrido un error al eliminar un usuario.');
+      }
       
+    } else {
+        if (password !== '') {
+          try {
+            const saltRounds = 10;
+            bcrypt.hash(password, saltRounds,async (err, hash) => {
+            await req.context.models.User.update(
+                {
+                  username,
+                  password: hash,
+                  nombre,
+                  apellido,
+                  rol,
+                  edad,
+                  dpi,
+                },{
+                    returning: true, where: { username } 
+                  }
+              );
+            });
+            return res.status(OK).json('Usuario editado con exito');
+          } catch (error) {
+            return res.status(BAD_REQUEST).json('Ha ocurrido un error al editar un usuario.');
+          }
+          
+      }else {
+        try {
+          await req.context.models.User.update(
+            {
+              username,
+              password: hash,
+              nombre,
+              apellido,
+              rol,
+              edad,
+              dpi,
+            },{
+                returning: true, where: { username } 
+              }
+          );
+          return res.status(OK).json('Usuario editado con exito');
+          
+        } catch (error) {
+          return res.status(BAD_REQUEST).json('Ha ocurrido un error al editar un usuario.');
+        }
     
-    const saltRounds = 10;
-
-    bcrypt.hash(password, saltRounds,async (err, hash) => {
-      await req.context.models.User.update(
-        {
-          username,
-          password: hash,
-          nombre,
-          apellido,
-          rol,
-          edad,
-          dpi,
-        },{
-            returning: true, where: { username } 
-           }
-      );
-      return res.status(OK).json('Usuario editado con exito');
-    });
-  }else{
-    await req.context.models.User.update(
-      {
-        username,
-        password: hash,
-        nombre,
-        apellido,
-        rol,
-        edad,
-        dpi,
-      },{
-          returning: true, where: { username } 
-         }
-    );
-
-    return res.status(OK).json('Usuario editado con exito');
-
-  }
-  
+      }
+    }
   } catch (error) {
-    return res.status(BAD_REQUEST).json('Error al editar usuario');
+    return res.status(BAD_REQUEST).json('Ha ocurrido un error, Acceso denegado');
     }
-});
-
-/******************************************************************************
- *                      Post ResetPassword - "POST /resetpassword"
- ******************************************************************************/
-router.post('/resetpassword', async (req, res) => {
-  const {username,password} = req.body;
-  const buscarUsuario = await req.context.models.User.findOne({
-      where: {
-        username:username,
-      },
-      raw:true
-    }
-  );
-  if (buscarUsuario){ 
-
-    const saltRounds = 10;
-
-    bcrypt.hash(password, saltRounds,(err, hash) => {
-      req.context.models.User.update(
-        {
-          password: hash,
-        },
-        {returning: true, where: {username: username} }   
-      );
-    });
-    return res.status(OK).json({status:OK,message:'Contraseña cambiada existosamente'});
-  }else{
-    
-    return res.status(OK).json({
-      status:BAD_REQUEST,
-      success: false,
-      err: 'No existe nigun usuario con ese nombre'
-    });
-  }
-});
-
-/******************************************************************************
- *                      Post ResetPassword - "POST /resetmypassword"
- ******************************************************************************/
-router.post('/resetmypassword', async (req, res) => {
-  const { username,password } = req.body;
-  const buscarUsuario = await req.context.models.User.findOne({
-      where: {
-        username:username,
-      },
-      raw:true
-    }
-  );
-  if (buscarUsuario){ 
-
-    const saltRounds = 10;
-
-    bcrypt.hash(password, saltRounds,(err, hash) => {
-      req.context.models.User.update(
-        {
-          password: hash,
-          inicio_sesion: 1,
-        },
-        {returning: true, where: {username: username} }   
-      );
-    });
-    return res.status(OK).json({status:OK,message:'Contraseña cambiada existosamente'});
-  }else{
-    
-    return res.status(OK).json({
-      status:BAD_REQUEST,
-      success: false,
-      err: 'No existe nigun usuario con ese nombre'
-    });
-  }
 });
 
 //Definicion de Funciones

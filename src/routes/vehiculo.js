@@ -15,12 +15,14 @@ const router = Router();
 router.get('/', async (req, res) => {
 
   try {
-    jwt.verify(extractToken(req),process.env.SECRET);
+    //jwt.verify(extractToken(req),process.env.SECRET);
 
     const vehiculos = await req.context.models.Vehiculo.findAll({order: 
       [
         ['id', 'ASC'],
-      ],
+      ],where:{
+        eliminado: false,
+      },
         raw:true
       });
     return res.status(OK).send(vehiculos);
@@ -97,19 +99,64 @@ router.post('/', async (req, res) => {
     try {
         jwt.verify(extractToken(req),process.env.SECRET);
         const { vehiculo } = req.body;
-        
-        //Verifico si dentro de vehiculo viene un id
-        if (vehiculo.id !== undefined && vehiculo.id !== null && vehiculo.id !== '' ) {
-        
-        const verificarVehiculo = await req.context.models.Vehiculo.findOne({
-            where: {
-            id: vehiculo.id,
-            },
-            raw:true
-        });
 
-        if (verificarVehiculo) {
-        await req.context.models.Vehiculo.update(
+        try {
+          await req.context.models.Vehiculo.create(
+              {
+                  placa: vehiculo.placa || null,
+                  modelo: vehiculo.modelo || null,
+                  linea: vehiculo.linea || null,
+                  tipo: vehiculo.tipo || null,
+                  chasis: vehiculo.chasis || null,
+                  marca: vehiculo.marca || null,
+                  tamaño_motor: vehiculo.tamaño_motor || null,
+                  cant_cilindros: vehiculo.cant_cilindros || null,
+                  toneladas: vehiculo.toneladas || null,
+                  transmision: vehiculo.transmision || null,
+                  asientos: vehiculo.asientos || null,
+                  color: vehiculo.color || null,
+                  piloto: vehiculo.piloto || null,
+              }
+          );
+  
+          return res.status(OK).json('Vehiculo creado exitosamente.');
+          //logger.info(`Vehiculo creada por: ${vehiculo.username}`)
+          
+        } catch (error) {
+          return res.status(BAD_REQUEST).json('Ha ocurrido un error al crear un vehiculo.');
+        }
+  
+    } catch (error) {
+      //logger.error(`Error al crear vehiculo`, error);
+      return res.status(BAD_REQUEST).json('Ha ocurrido un error, Acceso denegado');
+    }
+  });
+
+  /******************************************************************************
+ *                      UPDATE/DELETE Vehiculo - "PUT /"
+ ******************************************************************************/
+
+router.put('/', async (req, res) => {
+  try {
+      jwt.verify(extractToken(req),process.env.SECRET);
+      const { vehiculo } = req.body;
+      if (vehiculo.eliminado) {
+        try {
+          await req.context.models.Vehiculo.update(
+            {
+                eliminado: vehiculo.eliminado || true
+            },
+            {
+                returning: true, where: { id: vehiculo.id } 
+            }
+          );
+          return res.status(OK).json('Vehiculo eliminado exitosamente.');
+        } catch (error) {
+          return res.status(BAD_REQUEST).json('Ha ocurrido un error al eliminar un vehiculo.');
+        }
+      } else {
+        try {
+          await req.context.models.Vehiculo.update(
             {
                 placa: vehiculo.placa || null,
                 modelo: vehiculo.modelo || null,
@@ -128,57 +175,17 @@ router.post('/', async (req, res) => {
             {
                 returning: true, where: { id: vehiculo.id } 
             }
-        );
-        return res.status(OK).json('Vehiculo actualizado exitosamente.');
-        }else{
-        await req.context.models.Vehiculo.create(
-            {
-                placa: vehiculo.placa || null,
-                modelo: vehiculo.modelo || null,
-                linea: vehiculo.linea || null,
-                tipo: vehiculo.tipo || null,
-                chasis: vehiculo.chasis || null,
-                marca: vehiculo.marca || null,
-                tamaño_motor: vehiculo.tamaño_motor || null,
-                cant_cilindros: vehiculo.cant_cilindros || null,
-                toneladas: vehiculo.toneladas || null,
-                transmision: vehiculo.transmision || null,
-                asientos: vehiculo.asientos || null,
-                color: vehiculo.color || null,
-                piloto: vehiculo.piloto || null,
-            }
-        );
-
-        return res.status(OK).json('Vehiculo creado exitosamente.');
+          );
+          return res.status(OK).json('Vehiculo editado exitosamente.');
+        } catch (error) {
+          return res.status(BAD_REQUEST).json('Ha ocurrido un error al editar un vehiculo.');
         }
-        }else{
-
-        await req.context.models.Vehiculo.create(
-            {
-                placa: vehiculo.placa || null,
-                modelo: vehiculo.modelo || null,
-                linea: vehiculo.linea || null,
-                tipo: vehiculo.tipo || null,
-                chasis: vehiculo.chasis || null,
-                marca: vehiculo.marca || null,
-                tamaño_motor: vehiculo.tamaño_motor || null,
-                cant_cilindros: vehiculo.cant_cilindros || null,
-                toneladas: vehiculo.toneladas || null,
-                transmision: vehiculo.transmision || null,
-                asientos: vehiculo.asientos || null,
-                color: vehiculo.color || null,
-                piloto: vehiculo.piloto || null,
-            } 
-        );
-        return res.status(OK).json('Vehiculo creado exitosamente.');
-        }
-        //logger.info(`Vehiculo creada por: ${vehiculo.username}`)
-  
-    } catch (error) {
-      logger.error(`Error al crear vehiculo`, error);
-      return res.status(BAD_REQUEST).json('Ha ocurrido un error al crear un vehiculo.');
-    }
-  });
+      }
+  } catch (error) {
+    //logger.error(`Error al editar vehiculo`, error);
+    return res.status(BAD_REQUEST).json('Ha ocurrido un error, Acceso denegado');
+  }
+});
 
 
 export default router;

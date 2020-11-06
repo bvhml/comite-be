@@ -38,6 +38,7 @@ sequelize.sync({ force: true }).then(async () => {
 
 const createSampleData = async () => {
 
+  //Directores
   await models.User.create(
     {
       username: 'byrito95@gmail.com',
@@ -61,6 +62,7 @@ const createSampleData = async () => {
     },
   );
   
+  //Administradores
   await models.User.create(
     {
       username: 'administrador1@gmail.com',
@@ -84,6 +86,7 @@ const createSampleData = async () => {
     },
   );
 
+  //Solicitante
   await models.User.create(
     {
       username: 'solicitante1@gmail.com',
@@ -107,6 +110,7 @@ const createSampleData = async () => {
     },
   );
   
+  //Pilotos
   await models.User.create(
     {
       username: 'piloto1@gmail.com',
@@ -130,6 +134,18 @@ const createSampleData = async () => {
     },
   );
 
+  //Soportes
+  await models.User.create(
+    {
+      username: 'soportecomite@gmail.com',
+      password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
+      nombre:'Fernando',
+      apellido:'Lemus',
+      edad:'20',
+      dpi:'2739977850101',
+      rol:'5',
+    },
+  );
 
   await models.Vehiculo.create(
     {
@@ -146,6 +162,23 @@ const createSampleData = async () => {
         asientos: '4',
         color: 'Negro',
         piloto: 7,
+    }
+  );
+  await models.Vehiculo.create(
+    {
+        placa: '557URL',
+        modelo: '2020',
+        linea: 'Hiace',
+        tipo:  'Panel',
+        chasis: '213213GXTJ2',
+        marca: 'Toyota',
+        tamaño_motor: '2500',
+        cant_cilindros: '4',
+        toneladas: '1',
+        transmision: 'Mecanica',
+        asientos: '14',
+        color: 'Plateado',
+        piloto: 8,
     }
   );
 

@@ -33,6 +33,14 @@ const usuario = (sequelize, DataTypes) => {
         unique: false,
         defaultValue: 0,
       },
+      titulo: {
+        type: DataTypes.STRING,
+        unique: false,
+      },
+      eliminado: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
       {
         timestamps: true,
