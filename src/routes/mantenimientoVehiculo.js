@@ -73,6 +73,17 @@ router.get('/:mantenimientoId', async (req, res) => {
                   vehiculoId: mantenimiento.vehiculoId || null,
               }
           );
+
+          const vehiculo = await req.context.models.Vehiculo.findOne(
+            {
+              where: {
+                id: mantenimiento.vehiculoId
+              }
+            }
+          );
+          const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+          await logAccion(req, `Usuario: ${decodedToken.username} creo un nuevo mantenimiento para el vehiculo ${vehiculo.placa}`);
+          
           return res.status(OK).json('Mantenimiento creado exitosamente.');
           
           //logger.info(`Mantenimiento creada por: ${mantenimiento.username}`)
@@ -107,6 +118,9 @@ router.get('/:mantenimientoId', async (req, res) => {
                 returning: true, where: { id: mantenimiento.id } 
             }
           );
+
+          const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+          await logAccion(req, `Usuario: ${decodedToken.username} elimino un mantenimiento con id: ${mantenimiento.id}`);
           return res.status(OK).json('Mantenimiento eliminado exitosamente.');
         } catch (error) {
           return res.status(BAD_REQUEST).json('Ha ocurrido un error al eliminar un mantenimiento.');
@@ -124,6 +138,10 @@ router.get('/:mantenimientoId', async (req, res) => {
                     returning: true, where: { id: mantenimiento.id } 
                 }
             );
+
+            const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+            await logAccion(req, `Usuario: ${decodedToken.username} edito un mantenimiento con id: ${mantenimiento.id}`);
+            
             return res.status(OK).json('Mantenimiento editado exitosamente.');
             //logger.info(`Mantenimiento creada por: ${mantenimiento.username}`)
 
@@ -137,5 +155,22 @@ router.get('/:mantenimientoId', async (req, res) => {
     }
     
   });
+
+
+  //Definicion funciones
+
+  const logAccion = async (req, descripcion)=>{
+    try {
+      await req.context.models.Log.create(
+        {
+          descripcion
+        }
+      );
+      return 'Log creado con exito'
+      
+    } catch (error) {
+      return 'Ha ocurrido un error al crear un log.';
+    }
+  };
 
   export default router;

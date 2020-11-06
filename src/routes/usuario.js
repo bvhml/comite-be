@@ -132,7 +132,6 @@ router.post('/register', async (req, res) => {
       });
     }else {
       const saltRounds = 10;
-
       bcrypt.hash(password, saltRounds,async (err, hash) => {
         req.context.models.User.create(
           {
@@ -208,6 +207,8 @@ router.put('/register', async (req, res) => {
               returning: true, where: { username } 
             }
         );
+        const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+        await logAccion(req, `Usuario: ${decodedToken.username} elimino el usuario ${username}`);
         return res.status(OK).json('Usuario eliminado con exito');
       } catch (error) {
         return res.status(OK).json('Ha ocurrido un error al eliminar un usuario.');
@@ -232,6 +233,9 @@ router.put('/register', async (req, res) => {
                   }
               );
             });
+            const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+            await logAccion(req, `Usuario: ${decodedToken.username} edito informacion del usuario ${username}`);
+
             return res.status(OK).json('Usuario editado con exito');
           } catch (error) {
             return res.status(BAD_REQUEST).json('Ha ocurrido un error al editar un usuario.');
@@ -252,6 +256,10 @@ router.put('/register', async (req, res) => {
                 returning: true, where: { username } 
               }
           );
+
+          const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+          await logAccion(req, `Usuario: ${decodedToken.username} edito informacion del usuario ${username}`);
+
           return res.status(OK).json('Usuario editado con exito');
           
         } catch (error) {
@@ -274,6 +282,20 @@ const enviarNotificacion = async (from, to, subject, html)=>{
     subject, // Subject line
     html
   });
+};
+
+const logAccion = async (req, descripcion)=>{
+  try {
+    await req.context.models.Log.create(
+      {
+        descripcion
+      }
+    );
+    return 'Log creado con exito'
+    
+  } catch (error) {
+    return 'Ha ocurrido un error al crear un log.';
+  }
 };
 
 export default router;

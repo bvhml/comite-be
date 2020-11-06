@@ -119,6 +119,9 @@ router.post('/', async (req, res) => {
               }
           );
   
+          const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+          await logAccion(req, `Usuario: ${decodedToken.username} agrego un nuevo vehiculo con placas: ${vehiculo.placa}`);
+
           return res.status(OK).json('Vehiculo creado exitosamente.');
           //logger.info(`Vehiculo creada por: ${vehiculo.username}`)
           
@@ -150,6 +153,9 @@ router.put('/', async (req, res) => {
                 returning: true, where: { id: vehiculo.id } 
             }
           );
+          const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+          await logAccion(req, `Usuario: ${decodedToken.username} elimino el vehiculo con placas: ${vehiculo.placa}`);
+
           return res.status(OK).json('Vehiculo eliminado exitosamente.');
         } catch (error) {
           return res.status(BAD_REQUEST).json('Ha ocurrido un error al eliminar un vehiculo.');
@@ -176,6 +182,9 @@ router.put('/', async (req, res) => {
                 returning: true, where: { id: vehiculo.id } 
             }
           );
+          const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+          await logAccion(req, `Usuario: ${decodedToken.username} edito el vehiculo con placas: ${vehiculo.placa}`);
+
           return res.status(OK).json('Vehiculo editado exitosamente.');
         } catch (error) {
           return res.status(BAD_REQUEST).json('Ha ocurrido un error al editar un vehiculo.');
@@ -187,5 +196,20 @@ router.put('/', async (req, res) => {
   }
 });
 
+//Definicion funciones
+
+const logAccion = async (req, descripcion)=>{
+  try {
+    await req.context.models.Log.create(
+      {
+        descripcion
+      }
+    );
+    return 'Log creado con exito'
+    
+  } catch (error) {
+    return 'Ha ocurrido un error al crear un log.';
+  }
+};
 
 export default router;

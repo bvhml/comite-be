@@ -21,10 +21,9 @@ let transporter = nodemailer.createTransport({
  *                      Get All Viajes - "GET /"
  ******************************************************************************/
 router.get('/todos/', async (req, res) => {
-
+try {
+  jwt.verify(extractToken(req),process.env.SECRET);
   try {
-    //jwt.verify(extractToken(req),process.env.SECRET);
-
     let viajesConRutas = [];
     const viajes = await req.context.models.Viaje.findAll({
       order: 
@@ -48,6 +47,10 @@ router.get('/todos/', async (req, res) => {
     logger.error(error);
     return res.status(BAD_REQUEST).json('Ha ocurrido un error al obtener los viajes'); 
   }
+} catch (error) {
+  return res.status(BAD_REQUEST).json('Ha ocurrido un error, Acceso denegado');
+}
+  
   
 });
 
@@ -189,6 +192,10 @@ router.post('/', async (req, res) => {
           viaje.rutas.map((ruta)=>req.context.models.Ruta.create({...ruta, id_viaje:viaje_creado.dataValues.id}))
 
           await t.commit();
+
+          const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+          await logAccion(req, `Usuario: ${decodedToken.username} creo un nuevo viaje`);
+
           return res.status(OK).json('Viaje creado exitosamente.');
           
           //logger.info(`Viaje creada por: ${viaje.username}`)
@@ -223,6 +230,9 @@ router.put('/', async (req, res) => {
               returning: true, where: { id: viaje.id } 
           }
         );
+          const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
+          await logAccion(req, `Usuario: ${decodedToken.username} elimino un nuevo viaje con id: ${viaje.id}`);
+
         return res.status(OK).json('Viaje eliminado exitosamente.');
       } catch (error) {
         return res.status(BAD_REQUEST).json('Ha ocurrido un error al eliminar un viaje.');
@@ -238,6 +248,7 @@ router.put('/', async (req, res) => {
         });
   
         if (verificarViaje) {
+          const decodedToken = jwt.decode(extractToken(req),process.env.SECRET);
           switch (viaje.id_estatus) {
             //APROBAR viaje por DIRECTOR
             case 1:
@@ -249,6 +260,8 @@ router.put('/', async (req, res) => {
                         returning: true, where: { id: viaje.id } 
                     }
                 );
+                await logAccion(req, `Director con usuario: ${decodedToken.username} aprobo el viaje con id: ${viaje.id}`);
+
                 return res.status(OK).json('Viaje actualizado exitosamente.');
             //ASIGNAR CONDUCTORES A CADA RUTA por ADMIN
             case 2:
@@ -264,7 +277,9 @@ router.put('/', async (req, res) => {
                   );
                   //Agregar rutas de viaje que ya contienen CONDUCTOR
                   await viaje.rutas.map((ruta)=>req.context.models.Ruta.update({ id_conductor: ruta.id_conductor},{returning: true, where: { id: ruta.id } }));
-            
+
+                  await logAccion(req, `Administrador con usuario: ${decodedToken.username} asigno pilotos al viaje con id: ${viaje.id}`);
+
                   return res.status(OK).json('Viaje actualizado exitosamente.');
                   
                 } catch (error) {
@@ -282,6 +297,9 @@ router.put('/', async (req, res) => {
                     returning: true, where: { id: viaje.id } 
                 }
               );
+
+              await logAccion(req, `Administrador con usuario: ${decodedToken.username} inicio el viaje con id: ${viaje.id}`);
+
               return res.status(OK).json('Viaje actualizado exitosamente.');
   
             //COMPLETAR viaje por ADMIN
@@ -294,9 +312,12 @@ router.put('/', async (req, res) => {
                     returning: true, where: { id: viaje.id } 
                 }
               );
+              
+              await logAccion(req, `Administrador con usuario: ${decodedToken.username} colocó en completado el viaje con id: ${viaje.id}`);
+
               return res.status(OK).json('Viaje actualizado exitosamente.');
   
-            //DENEGAR por ADMIN(Status negativo)
+            //DENEGAR por Director(Status negativo)
             default:
   
               await req.context.models.Viaje.update(
@@ -307,6 +328,9 @@ router.put('/', async (req, res) => {
                     returning: true, where: { id: viaje.id } 
                 }
             );
+            
+            await logAccion(req, `Director con usuario: ${decodedToken.username} desaprobo el viaje con id: ${viaje.id}`);
+
             return res.status(OK).json('Viaje denegado exitosamente.');
           }
         }else{
@@ -337,4 +361,17 @@ const enviarNotificacion = async (from, to, subject, html)=>{
   });
 };
 
+const logAccion = async (req, descripcion)=>{
+  try {
+    await req.context.models.Log.create(
+      {
+        descripcion
+      }
+    );
+    return 'Log creado con exito'
+    
+  } catch (error) {
+    return 'Ha ocurrido un error al crear un log.';
+  }
+};
 export default router;
