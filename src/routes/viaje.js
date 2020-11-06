@@ -88,7 +88,7 @@ router.get('/misviajes/solicitante/:id_usuario', async (req, res) => {
 });
 
 /******************************************************************************
- *                      Get All Viajes de Usuario (SOLICITANTE) especifico - "GET /:id_usuario"
+ *                      Get All Viajes de Usuario (DIRECTOR) especifico - "GET /:id_usuario"
  ******************************************************************************/
 router.get('/misviajes/director/:id_usuario', async (req, res) => {
 
