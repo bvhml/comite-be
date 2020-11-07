@@ -25,6 +25,9 @@ router.get('/', async (req, res) => {
     jwt.verify(extractToken(req),process.env.SECRET);
 
     const users = await req.context.models.User.findAll({
+      order: [
+        ['id', 'ASC'],
+      ],
       attributes:['id','username','nombre','apellido','edad','dpi','rol'],
       where:{
         eliminado: false,
@@ -69,7 +72,8 @@ router.post('/login', async (req, res) => {
   bcrypt.hash(password, saltRounds,(err, hash) => {
     req.context.models.User.findOne({
       where:{
-        username: email
+        username: email,
+        eliminado: false,
       },
       attributes: ['id','username','password','nombre','apellido']
     }).then((user) => {
@@ -199,6 +203,8 @@ router.put('/register', async (req, res) => {
   try{
     jwt.verify(extractToken(req),process.env.SECRET);
     const { username, password, nombre, apellido, edad, dpi, rol, eliminado, titulo } = req.body;
+
+    console.log(eliminado)
     if (eliminado) {
       try {
         await req.context.models.User.update(

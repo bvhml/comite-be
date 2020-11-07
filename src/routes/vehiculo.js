@@ -17,10 +17,11 @@ router.get('/', async (req, res) => {
   try {
     //jwt.verify(extractToken(req),process.env.SECRET);
 
-    const vehiculos = await req.context.models.Vehiculo.findAll({order: 
-      [
-        ['id', 'ASC'],
-      ],where:{
+    const vehiculos = await req.context.models.Vehiculo.findAll({
+      order: [
+          ['id', 'ASC'],
+        ],
+      where:{
         eliminado: false,
       },
         raw:true

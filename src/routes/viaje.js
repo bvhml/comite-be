@@ -28,7 +28,7 @@ try {
     const viajes = await req.context.models.Viaje.findAll({
       order: 
       [
-        ['id', 'ASC'],
+        ['id', 'DESC'],
       ],
         raw:true
       });
