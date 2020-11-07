@@ -115,7 +115,7 @@ router.post('/login', async (req, res) => {
  ******************************************************************************/
 router.post('/register', async (req, res) => {
   try {
-    const { username, password, nombre, apellido, edad, dpi, rol } = req.body;
+    const { username, password, nombre, apellido, edad, dpi, rol, titulo } = req.body;
     const buscarUsuario = await req.context.models.User.findOne({
       attributes:['username'],
         where: {
@@ -142,6 +142,7 @@ router.post('/register', async (req, res) => {
             rol,
             edad,
             dpi,
+            titulo,
           },
         ).then(async (user) => {
           if (user === null) {
@@ -197,7 +198,7 @@ router.post('/register', async (req, res) => {
 router.put('/register', async (req, res) => {
   try{
     jwt.verify(extractToken(req),process.env.SECRET);
-    const { username, password, nombre, apellido, edad, dpi, rol, eliminado } = req.body;
+    const { username, password, nombre, apellido, edad, dpi, rol, eliminado, titulo } = req.body;
     if (eliminado) {
       try {
         await req.context.models.User.update(
@@ -228,6 +229,7 @@ router.put('/register', async (req, res) => {
                   rol,
                   edad,
                   dpi,
+                  titulo,
                 },{
                     returning: true, where: { username } 
                   }
@@ -252,6 +254,7 @@ router.put('/register', async (req, res) => {
               rol,
               edad,
               dpi,
+              titulo,
             },{
                 returning: true, where: { username } 
               }
