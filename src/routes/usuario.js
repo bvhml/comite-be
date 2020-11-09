@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
       order: [
         ['id', 'ASC'],
       ],
-      attributes:['id','username','nombre','apellido','edad','dpi','rol'],
+      attributes:['id','username','nombre','apellido','edad','dpi','rol','titulo'],
       where:{
         eliminado: false,
       },
