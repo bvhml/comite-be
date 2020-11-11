@@ -2,11 +2,11 @@
   "name": "info-ae-be",
   "version": "0.1.0",
   "private": true,
-  "bin": "src/server/express.js",
+  "bin": "dist/server/express.js",
   "pkg": {
     "assets": [
       "node_modules/**/*",
-      "src/**/*"
+      "dist/**/*"
     ],
     "targets": [
       "node12-macos-x64",
