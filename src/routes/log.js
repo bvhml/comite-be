@@ -13,7 +13,7 @@ const router = Router();
 router.get('/', async (req, res) => {
 
   try {
-    //jwt.verify(extractToken(req),process.env.SECRET);
+    jwt.verify(extractToken(req),process.env.SECRET);
 
     const logs = await req.context.models.Log.findAll({
       order: [

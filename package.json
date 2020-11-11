@@ -24,6 +24,9 @@
     "express-jwt": "^6.0.0",
     "file-type": "^14.6.2",
     "fs": "0.0.1-security",
+    "gulp": "4",
+    "gulp-babel": "^8.0.0",
+    "gulp-plumber": "^1.2.1",
     "helmet": "^4.2.0",
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
@@ -71,7 +74,7 @@
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/node": "^7.10.4",
-    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-env": "^7.12.1",
     "nodemon": "^2.0.4",
     "sequelize-cli": "^6.2.0"
   }
