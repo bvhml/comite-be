@@ -2,6 +2,17 @@
   "name": "info-ae-be",
   "version": "0.1.0",
   "private": true,
+  "bin": "src/server/express.js",
+  "pkg": {
+    "assets": [
+      "node_modules/**/*",
+      "src/**/*"
+    ],
+    "targets": [
+      "node12-macos-x64",
+      "node10-win-x64"
+    ]
+  },
   "dependencies": {
     "aws-sdk": "^2.713.0",
     "bcrypt": "^5.0.0",
@@ -13,6 +24,7 @@
     "express-jwt": "^6.0.0",
     "file-type": "^14.6.2",
     "fs": "0.0.1-security",
+    "helmet": "^4.2.0",
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^2.2.0",
