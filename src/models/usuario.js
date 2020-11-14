@@ -5,15 +5,15 @@ const usuario = (sequelize, DataTypes) => {
         unique: true,
       },
       password: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         unique: false,
       },
       nombre: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         unique: false,
       },
       apellido: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         unique: false,
       },
       edad: {
@@ -21,7 +21,7 @@ const usuario = (sequelize, DataTypes) => {
         unique: false,
       },
       dpi: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         unique: false,
       },
       rol: {
@@ -34,7 +34,7 @@ const usuario = (sequelize, DataTypes) => {
         defaultValue: 0,
       },
       titulo: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         unique: false,
       },
       eliminado: {

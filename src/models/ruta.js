@@ -1,11 +1,11 @@
 const ruta = (sequelize, DataTypes) => {
     const Ruta = sequelize.define('ruta', {
       ubicacion_inicio: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         unique: false,
       },
       ubicacion_fin: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         unique: false,
       },
       numero_personas: {
@@ -13,11 +13,11 @@ const ruta = (sequelize, DataTypes) => {
         unique: false,
       },
       fecha: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         unique: false,
       },
       notas: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         unique: false,
       },
       eliminado: {

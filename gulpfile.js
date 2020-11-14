@@ -10,12 +10,14 @@ const plumber = require('gulp-plumber');
 exports.default = function(done) {
   // This will grab any file within src/components or its
   // subdirectories, then ...
-  return src('./src/**/*.js')
+  return src('./src/components/**/*.js')
     // Stop the process if an error is thrown.
     .pipe(plumber())
     // Transpile the JS code using Babel's preset-env.
     .pipe(babel({
-        presets: ['@babel/preset-env']
+      presets: [
+        ['@babel/env']
+      ]
     }))
     // Save each component as a separate file in dist.
     .pipe(dest('./dist'))

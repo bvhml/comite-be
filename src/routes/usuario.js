@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { BAD_REQUEST, CREATED, OK, NOT_FOUND, NO_CONTENT  } from 'http-status-codes';
+import { BAD_REQUEST, CREATED, OK, NOT_FOUND, NO_CONTENT, FORBIDDEN  } from 'http-status-codes';
 import { logger } from '../shared/Logger';
 import extractToken from '../shared/extractToken';
 import nodemailer from 'nodemailer';
