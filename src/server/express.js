@@ -9,9 +9,6 @@ import https from 'https';
 sequelize.sync({ force: false }).then(async () => {
   try {
 
-    //Crear usuario Admin example
-    createSampleData();
-
     if(process.env.HTTPS_SERVER === 'true'){
       var options = {
         key: fs.readFileSync(path.resolve('../key.pem')),
