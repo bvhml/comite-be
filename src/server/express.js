@@ -6,7 +6,7 @@ import http from 'http';
 import https from 'https';
 
 //force usado para hacer un truncate de toda la base de datos
-sequelize.sync({ force: true }).then(async () => {
+sequelize.sync({ force: false }).then(async () => {
   try {
 
     //Crear usuario Admin example
