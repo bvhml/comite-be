@@ -12,6 +12,7 @@
 /build
 /dist
 postgres-data
+*.zip
 # misc
 .DS_Store
 .env

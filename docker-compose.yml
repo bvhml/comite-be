@@ -12,7 +12,7 @@ services:
       - POSTGRES_PASSWORD=url_root
       - POSTGRES_USER=postgres
   node:
-    build: .
+    image: 7179/comite-be
     ports:
       - "3000:3000"    
     links:
