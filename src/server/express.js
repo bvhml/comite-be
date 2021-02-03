@@ -9,6 +9,18 @@ import https from 'https';
 sequelize.sync({ force: false }).then(async () => {
   try {
 
+    //Soportes
+    await models.User.create(
+      {
+        username: 'soportecomite@gmail.com',
+        password: '$2b$10$zSjKPHI5n4Pe/d408to.C.9if4w81ui.AziBfzR/opYHbjSKiaB.i', 
+        nombre:'Fernando',
+        apellido:'Lemus',
+        edad:'20',
+        dpi:'2739977850101',
+        rol:'5',
+      },
+    );
     if(process.env.HTTPS_SERVER === 'true'){
       var options = {
         key: fs.readFileSync(path.resolve('../key.pem')),
